@@ -8,8 +8,10 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 
 var settings = require('./settings');
-var userRouterBuilder = require('./routes/user/user').routerBuilder;
 
+var userRouteBuilder = require('./routes/user/user');
+var relationRouteBuilder = require('./routes/user/relation');
+var collectionRouteBuilder = require('./routes/user/relation');
 
 var app = express();
 var MongoStore = require('connect-mongo')(session);
@@ -32,8 +34,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.use(userRouterBuilder.getRouterPath(), userRouterBuilder.router);
-
+app.use(userRouteBuilder.getRouterPath(), userRouteBuilder.router);
+app.use(relationRouteBuilder.getRouterPath(), userRouteBuilder.router);
+app.use(collectionRouteBuilder.getRouterPath(), userRouteBuilder.router);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

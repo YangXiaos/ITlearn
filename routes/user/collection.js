@@ -9,7 +9,7 @@ var commonFn = require('../../routes/commonFn');
 var Collection = require('../../models/user/collection').model;
 
 
-var collectionRouterBuilder = new RouterBuilder(
+var collectionRouteBuilder = new RouterBuilder(
     collectionModelBuilder,
     {
         // get 前置路由
@@ -39,4 +39,4 @@ var collectionRouterBuilder = new RouterBuilder(
 );
 
 
-module.exports = collectionRouterBuilder;
+module.exports = collectionRouteBuilder;

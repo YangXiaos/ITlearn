@@ -21,7 +21,6 @@ var loginFn = function (req, res, next) {
                 res.send();
             } else {
                 // 发送异常结果
-
             }
         });
 };
@@ -36,7 +35,7 @@ var loginFn = function (req, res, next) {
  *  用于用户登录验证
  *
  */
-var userRouterBuilder = new RouteBuilder(
+var userRouteBuilder = new RouteBuilder(
     mBuilder,
     {
         // patch额外方法
@@ -81,4 +80,4 @@ var userRouterBuilder = new RouteBuilder(
 
 
 
-module.exports.routerBuilder = userRouterBuilder;
+module.exports = userRouteBuilder;

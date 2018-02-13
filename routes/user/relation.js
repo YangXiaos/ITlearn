@@ -11,10 +11,9 @@ var Relation = require('../../models/user/relation').model;
 
 
 
-var relationRouterBuilder = new RouteBuilder(
+module.exports = new RouteBuilder(
     mBuilder,
     {
-
         // post 前置方法
         postFn: [
             commonFn.checkIsLogin,
@@ -34,12 +33,10 @@ var relationRouterBuilder = new RouteBuilder(
                 url: "/count",
                 fn: function (req, res, next) {
                     Relation.count(req.conditions, function (err, count) {
-
                         if (!err){
                             // 返回请求结果
                             res.send()
                         } else {
-
                         }
                     })
                 }
