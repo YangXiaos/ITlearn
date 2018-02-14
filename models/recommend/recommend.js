@@ -19,22 +19,21 @@ var ModelBuilder = require('../modelBuilder');
  *  @filed: upVotes {@type: [Number]} 点赞用户id关联
  *
  * schemaOptions
- *  @field: collectionName: "recommend"
+ *  @field: collectionName: "recommends"
  */
 var mBuilder = new ModelBuilder(
     {
-        user: {type: Number, ref: "user"},
+        user: {type: Number, ref: "users"},
         url: String,
         createDateTime: {type: Date, default: Date.now},
         desc: {type: String, default: ""},
         title: String,
         content: String,
-        tags: [{type: Number, ref: "user"}],
-        upVotes: [{type: Number, ref: "user"}]
-
+        tags: [{type: Number, ref: "users"}],
+        upVotes: [{type: Number, ref: "users"}]
     },
     {
-        collectionName: "recommend",
+        collectionName: "recommends",
         incId: true
     }
 );

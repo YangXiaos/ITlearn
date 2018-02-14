@@ -21,7 +21,7 @@ var mBuilder = new ModelBuilder(
         name: String
     },
     {
-        collectionName: "recommendTag",
+        collectionName: "tags",
         incId: true
     }
 );
