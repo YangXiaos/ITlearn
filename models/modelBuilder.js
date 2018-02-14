@@ -42,8 +42,9 @@ function resetCreateFn(schema) {
 function ModelBuilder(schemaFields, options) {
 
     var modelBuilder = this;
+
     schemaFields = schemaFields || {};
-    var incId = options.incId || false;
+    var incId = options.incId || false;  // 自增id
     var plugin = options.plugin || undefined;
 
     // 字段设置自增_id
@@ -54,10 +55,10 @@ function ModelBuilder(schemaFields, options) {
     this.collectionName = options.collectionName;
     this.schema = new mongoose.Schema(schemaFields);
 
-    // 是否有插件
+    // schema 添加自定义　plugin
     plugin? this.schema.plugin(plugin): undefined;
 
-    // 重新定义创建对象方法
+    // schema 添加　自增id plugin
     incId? this.schema.plugin(resetCreateFn): undefined;
 
     this.model = mongoose.model(this.collectionName, this.schema);
