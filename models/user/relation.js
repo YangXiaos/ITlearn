@@ -18,11 +18,11 @@ var ModelBuilder = require('../modelBuilder');
 var mBuilder = new ModelBuilder(
     {
         _id: Number,
-        user: {type: Number, ref: 'user'},
-        followedUser: {type: Number, ref: 'user'}
+        user: {type: Number, ref: 'users'},
+        followedUser: {type: Number, ref: 'users'}
     },
     {
-        collectionName: "relation",
+        collectionName: "relations",
         incId: true,
         plugin: function (schema) {
             schema.pre("save", function (next) {

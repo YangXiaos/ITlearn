@@ -20,12 +20,12 @@ var ModelBuilder = require('../modelBuilder');
 var mBuilder = new ModelBuilder(
     {
         _id: Number,
-        user: {type: Number, ref: "user"},
-        blog: {type: Number, ref: "blog"},
+        user: {type: Number, ref: "users"},
+        recommend: {type: Number, ref: "recommends"},
         date: {type: Date, default: Date.now}
     },
     {
-        collectionName: "collection",
+        collectionName: "collections",
         incId: true
     }
 );
