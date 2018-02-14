@@ -1,6 +1,6 @@
 /*
 * Create By mryang On 17-8-18
-* 用户模型的定义
+* 用户模型 定义
 */
 var ModelBuilder = require('../modelBuilder');
 var md5 = require('../../settings').md5;
@@ -29,7 +29,7 @@ var mBuilder = new ModelBuilder(
         isManager: {type: Boolean, default: false}
     },
     {
-        collectionName: "user",
+        collectionName: "users",
         incId: true,
         plugin: function (schema) {
             schema.pre("save", function (next) {
