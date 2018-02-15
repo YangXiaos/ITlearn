@@ -15,7 +15,6 @@ var collectionRouteBuilder = new RouterBuilder(
         // get 前置路由
         getFn: [
             commonFn.checkIsLogin
-            // commonFn.setConditionUser
         ],
 
         // post 前置路由
@@ -31,7 +30,8 @@ var collectionRouteBuilder = new RouterBuilder(
         ],
 
         // 链接
-        resourceUrl: ":user/collection",
+        pidUel: "/users",
+        resourceUrl: "/:user/collections",
 
         // 查询数量限制
         limit: 10

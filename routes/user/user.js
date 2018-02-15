@@ -7,7 +7,12 @@ var commonFn = require('../../routes/commonFn');
 var User = require('../../models/user/user').model;
 var md5 = require('../../settings').md5;
 
-
+/**
+ * 登录方法
+ * @param req
+ * @param res
+ * @param next
+ */
 var loginFn = function (req, res, next) {
     var condition = {
         password: md5.update(req.body.password),
@@ -16,14 +21,35 @@ var loginFn = function (req, res, next) {
     User.findOne(condition)
         .then(function (err, user) {
             req.session.user = user;
-
             if (user){
-                res.send();
+                res.json({
+                    status: 0,
+                    user: user
+                });
             } else {
                 // 发送异常结果
+                res.json({status: 1, message: "没有该用户"});
             }
         });
 };
+
+
+/**
+ * 校验当前用户是否为目标用户，或者为管理员
+ * @param req
+ * @param res
+ * @param next
+ */
+var checkUserIsSelfOrIsManager = function (req, res, next) {
+    if (req.conditions._id === req.session.user._id || req.session.user.isManager) {
+        next();
+    } else {
+        // 发送异常结果
+        res.status(401);
+        res.json({status: 0, message: "用户无权限"});
+    }
+};
+
 
 /**
  * 用户模型路由构造器
@@ -38,34 +64,36 @@ var loginFn = function (req, res, next) {
 var userRouteBuilder = new RouteBuilder(
     mBuilder,
     {
-        // patch额外方法
+        // post 前置钩子
+        postFn: [
+            // 判断email 是否被占用
+            function (req, res, next) {
+                mBuilder.model.findOne({email: req.doc.email}, function (err, doc) {
+                    if (doc) {
+                        res.status(422);
+                        res.json({status: 0, message: "验证错误"});
+                    } else {
+                        next();
+                    }
+                });
+            }
+        ],
+
+        // patch 前置钩子
         patchFn: [
             commonFn.checkIsLogin,
-            function (req, res, next) {
-                if (req.conditions._id === req.session.user._id){
-                    next();
-                } else {
-                    // 发送异常结果
-
-                }
-            }
+            checkUserIsSelfOrIsManager
         ],
 
-        // delete额外方法
+        // delete 前置钩子
         deleteFn: [
             commonFn.checkIsLogin,
-            function (req, res, next) {
-                if (req.session.user.isManager){
-                    next()
-                } else {
-                    // 发送错误异常
-                }
-            }
+            commonFn.checkIsManager
         ],
 
-        // 配置额外方法
+        // 配置 前置钩子
         extraRule: [
-            // 登录额外方法配置
+            // 登录方法配置
             {
                 method: "post",
                 url: "/login",

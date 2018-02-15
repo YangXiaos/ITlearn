@@ -14,19 +14,19 @@ var Relation = require('../../models/user/relation').model;
 module.exports = new RouteBuilder(
     mBuilder,
     {
-        // post 前置方法
+        // post 前置钩子
         postFn: [
             commonFn.checkIsLogin,
             commonFn.setDocUser
         ],
 
-        // delete 前置方法
+        // delete 前置钩子
         deleteFn: [
             commonFn.checkIsLogin,
             commonFn.checkUserByModel(Relation)
         ],
 
-        // 额外路由方法
+        // 额外路由钩子
         extraRule: [
             {
                 method: "get",
@@ -35,14 +35,18 @@ module.exports = new RouteBuilder(
                     Relation.count(req.conditions, function (err, count) {
                         if (!err){
                             // 返回请求结果
-                            res.send()
+                            // res.json();
                         } else {
+                            // 返回请求结果
+
                         }
                     })
                 }
             }
         ],
 
+        pidUel: "/users",
+        resourceUrl: "/:user/relations",
         limit: 20
     }
 );
