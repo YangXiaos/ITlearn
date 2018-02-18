@@ -29,7 +29,8 @@ var mBuilder = new ModelBuilder(
             default: ""
         },
         createDateTime: {type: Date, default: Date.now},
-        user: {type: Number, ref: 'users'}
+        user: {type: Number, ref: 'users'},
+        users: [{type: Number, ref: 'users'}]
     },
     {
         collectionName: "groups",
