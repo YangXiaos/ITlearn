@@ -12,7 +12,7 @@ var settings = require('../settings');
 mongoose.connect('mongodb://localhost/ITlearning');
 
 // 获取条件
-function getConditions(reqConditions, fields) {
+function extractFields(reqConditions, fields) {
     var params = {};
 
     // 循环条件
@@ -68,11 +68,16 @@ function RouterBuilder(modelBuilder, routerOptions) {
         deleteSuccess: function (req, doc) {},
         getSuccess: function (req, doc) {},
         patchSuccess: function (req, doc) {},
+
+        populate: "",
+        filedList: "-__v",
         extraRule: []
     };
 
     for (var key in defaultRouterOptions){
-        if (!(key in routerOptions)){
+        if(key === "filedList"){
+            routerOptions[key] = defaultRouterOptions[key] + " " + routerOptions[key];
+        } else if (!(key in routerOptions)){
             routerOptions[key] = defaultRouterOptions[key];
         }
     }
@@ -88,24 +93,21 @@ function RouterBuilder(modelBuilder, routerOptions) {
      * @param res
      * @param next
      */
-    this.getConditions = function (req, res, next) {
+    this.setup = function (req, res, next) {
         req.metaKey = null;
-        req.conditions = getConditions(req.query, this.fields);
-        req.doc = getConditions(req.body, this.fields);
-        req.params = getConditions(req.params, this.fields);
-
+        req.conditions = extractFields(req.query, this.fields);
+        req.doc = extractFields(req.body, this.fields);
+        req.params = extractFields(req.params, this.fields);
+        req.filedList = routerOptions.filedList;
         // 获取查询规则
         var conditions = {};
-        if ("_id" in req.conditions){
-            conditions["_id"] = req.conditions._id;
-        } else {
-            conditions = Object.assign(req.params, req.conditions);
-        }
+        conditions["_id"] = "_id" in req.conditions? req.conditions._id: Object.assign(req.params, req.conditions);
+
         req.conditions = conditions;
         next();
     };
 
-    this.router.route("*").all(this.getConditions);
+    this.router.route("*").all(this.setup);
 
     for (var i = 0; i < routerOptions.extraRule.length; i++){
         var rule = routerOptions.extraRule[i];
@@ -114,6 +116,7 @@ function RouterBuilder(modelBuilder, routerOptions) {
 
     this.router.route(routerOptions.resourceUrl)
         .post(routerOptions.postFn, function (req, res) {
+
             routerBuilder.model.create(req.doc, function (err, doc) {
                 // 异常操作
                 if (err){
@@ -126,6 +129,7 @@ function RouterBuilder(modelBuilder, routerOptions) {
             });
         })
         .delete(routerOptions.deleteFn, function (req, res) {
+
             routerBuilder.model.remove(req.conditions, function (err, result) {
                 // 异常操作
                 if (err){
@@ -137,7 +141,7 @@ function RouterBuilder(modelBuilder, routerOptions) {
                 }
             });
         })
-        .get(routerOptions.getFn, function (req, res) {
+        .get(routerOptions.getFn, routerOptions.filedList, function (req, res) {
 
             // option设定, 确认skip limit查询,
             var options = {limit: routerOptions.limit, sort: {_id: -1}};
@@ -145,20 +149,22 @@ function RouterBuilder(modelBuilder, routerOptions) {
                 options.skip = Number(req.query.skip) * routerOptions.limit
             }
             if (req.query.sort) {
-                options.sort[req.query.sort] = Number(req.query.sortType)
+                options.sort[req.query.sort] = Number(req.query.sortType);
             }
 
-            routerBuilder.model.find(req.conditions, req.metaKey, options, function (err, docs) {
-                // 异常操作
-                if (err){
-                    res.status(404);
-                    res.json({error: err});
-                } else {
-                    routerOptions.getSuccess(req, docs);
-                    res.json(docs);
-                }
-
-            });
+            routerBuilder.model
+                .find(req.conditions, req.filedList, options)
+                .populate(routerOptions.populate)
+                .exec(function (err, docs) {
+                    // 异常操作
+                    if (err){
+                        res.status(404);
+                        res.json({status: 0, error: err});
+                    } else {
+                        routerOptions.getSuccess(req, docs);
+                        res.json({status: 1, data: docs});
+                    }
+                });
         })
         .patch(routerOptions.patchFn, function (req, res) {
 
