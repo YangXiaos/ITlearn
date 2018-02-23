@@ -6,25 +6,23 @@ var tagModelBuilder = require('../../models/recommend/tag').mBuilder;
 var RouterBuilder = require('../routeBuilder');
 var commonFn = require('../../routes/commonFn');
 
-var tag = require('../../models/recommend/tag').model;
-
 
 var tagRouterBuilder = new RouterBuilder(
     tagModelBuilder,
     {
         // post 前置路由
         postFn: [
-            commonFn.checkManager
+            commonFn.checkIsManager
         ],
 
         // patch 前置路由
         patchFn:[
-            commonFn.checkManager
+            commonFn.checkIsManager
         ],
 
         // delete 前置路由
         deleteFn: [
-            commonFn.checkManager
+            commonFn.checkIsManager
         ],
 
         // 查询数量限制

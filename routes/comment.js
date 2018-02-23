@@ -9,7 +9,7 @@ var commonFn = require('./commonFn');
 var comment = require('../models/comment').model;
 
 
-var commentRouterBuilder = new RouterBuilder(
+module.exports = new RouterBuilder(
     commentModelBuilder,
     {
         // post 前置钩子

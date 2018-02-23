@@ -36,4 +36,4 @@ var recommendRouterBuilder = new RouterBuilder(
     }
 );
 
-module.exports = recommendModelBuilder;
+module.exports = recommendRouterBuilder;

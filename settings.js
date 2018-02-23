@@ -2,17 +2,17 @@
 var crypto= require('crypto');
 
 var incCollectionList = [
-    "user",
-    "relation",
-    "collection",
-    "comment",
-    "recommend",
-    "recommendTag"
+    "users",
+    "relations",
+    "collections",
+    "comments",
+    "recommends",
+    "tags"
 ];
 
 
+var dbName = ""
 
-var md5 = crypto.createHash("md5");
 
 // 数据库
 var sessionConfig = {
@@ -28,7 +28,6 @@ var version = 'v1';
 
 
 module.exports.version = version;
-module.exports.md5 = md5;
 module.exports.dirName = __dirname;
 module.exports.incCollectionList = incCollectionList;
 module.exports.sessionConfig = sessionConfig;

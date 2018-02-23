@@ -30,13 +30,7 @@ var mBuilder = new ModelBuilder(
     },
     {
         collectionName: "users",
-        incId: true,
-        plugin: function (schema) {
-            schema.pre("save", function (next) {
-                this.password = md5.update(this.password).digest("hex");
-                next();
-            })
-        }
+        incId: true
     }
 );
 

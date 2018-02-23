@@ -45,7 +45,7 @@ module.exports = new RouteBuilder(
             }
         ],
 
-        pidUel: "/users",
+        pidUrl: "/users",
         resourceUrl: "/:user/relations",
         limit: 20
     }

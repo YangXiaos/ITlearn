@@ -5,7 +5,6 @@ var mBuilder = require('../../models/user/user').mBuilder;
 var commonFn = require('../../routes/commonFn');
 
 var User = require('../../models/user/user').model;
-var md5 = require('../../settings').md5;
 
 /**
  * 登录方法
@@ -15,23 +14,40 @@ var md5 = require('../../settings').md5;
  */
 var loginFn = function (req, res, next) {
     var condition = {
-        password: md5.update(req.body.password),
+        password: crypto.createHash("md5").update(req.body.password).digest('hex'),
         email: req.body.email
     };
-    User.findOne(condition)
-        .then(function (err, user) {
-            req.session.user = user;
-            if (user){
-                res.json({
-                    status: 0,
-                    user: user
-                });
-            } else {
-                // 发送异常结果
-                res.json({status: 1, message: "没有该用户"});
-            }
-        });
+    console.log(req.session.user);
+    User.find(condition, "-__v -password", function (err, user) {
+        if (user.length === 1){
+            req.session.user = user[0]._doc;
+            req.session.save();
+            res.json({
+                status: 0,
+                user: req.session.user
+            });
+        } else {
+            // 发送异常结果
+            res.json({status: 1, message: "没有该用户"});
+        }
+    });
 };
+
+
+/**
+ * 登出
+ * @param req
+ * @param res
+ * @param next
+ */
+var logout = function (req, res, next) {
+    req.session.user = null;
+    res.json({
+        status: 0,
+        message: "success"
+    });
+};
+
 
 
 /**
@@ -68,14 +84,18 @@ var userRouteBuilder = new RouteBuilder(
         postFn: [
             // 判断email 是否被占用
             function (req, res, next) {
-                mBuilder.model.findOne({email: req.doc.email}, function (err, doc) {
-                    if (doc) {
+                mBuilder.model.find({email: req.doc.email}, function (err, doc) {
+                    if (doc.length !== 0) {
                         res.status(422);
                         res.json({status: 0, message: "验证错误"});
                     } else {
                         next();
                     }
                 });
+            },
+            function (req, res, next) {
+                req.doc.password = crypto.createHash("md5").update(req.body.password).digest('hex');
+                next();
             }
         ],
 
@@ -96,8 +116,13 @@ var userRouteBuilder = new RouteBuilder(
             // 登录方法配置
             {
                 method: "post",
-                url: "/login",
+                url: "/login/",
                 fn: loginFn
+            },
+            {
+                method: "get",
+                url: "/logout/",
+                fn: logout
             }
         ],
 

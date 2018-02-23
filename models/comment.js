@@ -2,7 +2,7 @@
 * Create By mryang On 17-8-19
 * 评论模型
 */
-var ModelBuilder = require('modelBuilder');
+var ModelBuilder = require('./modelBuilder');
 
 /**
  * comment

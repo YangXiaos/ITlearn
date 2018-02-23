@@ -25,7 +25,7 @@ function extractFields(reqConditions, fields) {
         }
     }
 
-    return params
+    return params;
 }
 
 // 路由设定
@@ -49,7 +49,6 @@ function RouterBuilder(modelBuilder, routerOptions) {
         }
     }
 
-
     // 设置默认参数
     var defaultRouterOptions = {
         resourceUrl: "",
@@ -64,7 +63,9 @@ function RouterBuilder(modelBuilder, routerOptions) {
         getFn: [],
         patchFn: [],
 
-        postSuccess: function (req, doc) {},
+        postSuccess: function (req, res, doc) {
+            res.json(doc);
+        },
         deleteSuccess: function (req, doc) {},
         getSuccess: function (req, doc) {},
         patchSuccess: function (req, doc) {},
@@ -76,7 +77,11 @@ function RouterBuilder(modelBuilder, routerOptions) {
 
     for (var key in defaultRouterOptions){
         if(key === "filedList"){
-            routerOptions[key] = defaultRouterOptions[key] + " " + routerOptions[key];
+            if(routerOptions[key]){
+                routerOptions[key] = defaultRouterOptions[key] + " " + routerOptions[key];
+            } else {
+                routerOptions[key] = "-__v";
+            }
         } else if (!(key in routerOptions)){
             routerOptions[key] = defaultRouterOptions[key];
         }
@@ -94,16 +99,14 @@ function RouterBuilder(modelBuilder, routerOptions) {
      * @param next
      */
     this.setup = function (req, res, next) {
-        req.metaKey = null;
-        req.conditions = extractFields(req.query, this.fields);
-        req.doc = extractFields(req.body, this.fields);
-        req.params = extractFields(req.params, this.fields);
-        req.filedList = routerOptions.filedList;
-        // 获取查询规则
-        var conditions = {};
-        conditions["_id"] = "_id" in req.conditions? req.conditions._id: Object.assign(req.params, req.conditions);
+        req.conditions = extractFields(req.query, fields);
 
-        req.conditions = conditions;
+        req.doc = extractFields(req.body, fields);
+        req.params = extractFields(req.params, fields);
+        req.filedList = routerOptions.filedList;
+
+        // 获取查询规则
+        req.conditions= Object.assign(req.params, req.conditions);
         next();
     };
 
@@ -116,15 +119,13 @@ function RouterBuilder(modelBuilder, routerOptions) {
 
     this.router.route(routerOptions.resourceUrl)
         .post(routerOptions.postFn, function (req, res) {
-
             routerBuilder.model.create(req.doc, function (err, doc) {
                 // 异常操作
-                if (err){
+                if (err) {
                     res.status(404);
                     res.json({error: err});
                 } else {
-                    routerOptions.postSuccess(req, doc);
-                    res.json(doc);
+                    routerOptions.postSuccess(req, res, doc._doc);
                 }
             });
         })
@@ -141,12 +142,15 @@ function RouterBuilder(modelBuilder, routerOptions) {
                 }
             });
         })
-        .get(routerOptions.getFn, routerOptions.filedList, function (req, res) {
+        .get(routerOptions.getFn, function (req, res) {
 
             // option设定, 确认skip limit查询,
             var options = {limit: routerOptions.limit, sort: {_id: -1}};
-            if (req.query.skip) {
-                options.skip = Number(req.query.skip) * routerOptions.limit
+            if (req.query.page_size) {
+                options.limit = Number(req.query.page_size)
+            }
+            if (req.query.page) {
+                options.skip = (Number(req.query.page) - 1) * routerOptions.limit
             }
             if (req.query.sort) {
                 options.sort[req.query.sort] = Number(req.query.sortType);
@@ -196,7 +200,7 @@ function RouterBuilder(modelBuilder, routerOptions) {
 
     this.getRouterPath = function () {
         if(routerOptions.pidUrl) {
-            return "/" + settings.version + "/" + routerOptions.pidUrl;
+            return "/" + settings.version + routerOptions.pidUrl;
         } else {
             return "/" + settings.version + "/" + this.collectionName;
         }
