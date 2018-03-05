@@ -64,7 +64,7 @@ function RouterBuilder(modelBuilder, routerOptions) {
         patchFn: [],
 
         postSuccess: function (req, res, doc) {
-            res.json(doc);
+            res.json({status: 0, doc: doc});
         },
         deleteSuccess: function (req, doc) {},
         getSuccess: function (req, doc) {},

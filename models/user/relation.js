@@ -10,8 +10,8 @@ var ModelBuilder = require('../modelBuilder');
  * @type {ModelBuilder}
  * schema:
  *  @filed: _id {@type: Number}
- *  @filed: followUser {@type: } 关注用户
- *  @filed: followedUser {@type: } 被关注用户
+ *  @filed: user {@type: } 关注用户
+ *  @filed: follower {@type: } 被关注用户
  * schemaOptions
  *  @field: collectionName: "relation"
  */
@@ -19,7 +19,7 @@ var mBuilder = new ModelBuilder(
     {
         _id: Number,
         user: {type: Number, ref: 'users'},
-        followedUser: {type: Number, ref: 'users'}
+        follower: {type: Number, ref: 'users'}
     },
     {
         collectionName: "relations",
