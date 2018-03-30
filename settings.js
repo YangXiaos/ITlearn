@@ -7,7 +7,8 @@ var incCollectionList = [
     "collections",
     "comments",
     "recommends",
-    "tags"
+    "tags",
+    "topics"
 ];
 
 
