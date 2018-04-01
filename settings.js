@@ -8,11 +8,12 @@ var incCollectionList = [
     "comments",
     "recommends",
     "tags",
-    "topics"
+    "topics",
+    "groups"
 ];
 
 
-var dbName = ""
+var dbName = "";
 
 
 // 数据库
