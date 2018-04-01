@@ -9,7 +9,7 @@ var async = require('async');
 var CollectionsId = require('../models/collectionsIdSchema');
 var settings = require('../settings');
 
-mongoose.connect('mongodb://localhost/ITlearning');
+mongoose.connect('mongodb://localhost/ITearning');
 
 // 获取条件
 function extractFields(reqConditions, fields) {
@@ -17,11 +17,21 @@ function extractFields(reqConditions, fields) {
 
     // 循环条件
     for(var fieldName in fields){
-        var fn = fields[fieldName];
-        var param = reqConditions[fieldName];
+        var field =  fields[fieldName];
+        var value = reqConditions[fieldName];
 
-        if (param){
-            params[fieldName] = fn(param)
+        if (value instanceof Array) {
+            params[fieldName] = value;
+            continue;
+        }
+
+        if (value && typeof field === "function") {
+            params[fieldName] = field(value);
+            continue;
+        }
+
+        if (value && typeof field === "object"){
+            params[fieldName] = field.type(value);
         }
     }
 
@@ -36,7 +46,7 @@ function RouterBuilder(modelBuilder, routerOptions) {
     var fields = modelBuilder.schema.obj;
     this.fields = {};
     this.populateFields = {};
-    for (var key in fields){
+    for (key in fields){
         var val = fields[key];
         if (val instanceof Array){
             continue;
@@ -64,7 +74,7 @@ function RouterBuilder(modelBuilder, routerOptions) {
         patchFn: [],
 
         postSuccess: function (req, res, doc) {
-            res.json({status: 0, doc: doc});
+            res.json({status: 0, data: doc});
         },
         deleteSuccess: function (req, doc) {},
         getSuccess: function (req, doc) {},
@@ -100,7 +110,6 @@ function RouterBuilder(modelBuilder, routerOptions) {
      */
     this.setup = function (req, res, next) {
         req.conditions = extractFields(req.query, fields);
-
         req.doc = extractFields(req.body, fields);
         req.params = extractFields(req.params, fields);
         req.filedList = routerOptions.filedList;
@@ -123,14 +132,13 @@ function RouterBuilder(modelBuilder, routerOptions) {
                 // 异常操作
                 if (err) {
                     res.status(404);
-                    res.json({error: err});
+                    res.json({error: err, stack: err.stack});
                 } else {
                     routerOptions.postSuccess(req, res, doc._doc);
                 }
             });
         })
         .delete(routerOptions.deleteFn, function (req, res) {
-
             routerBuilder.model.remove(req.conditions, function (err, result) {
                 // 异常操作
                 if (err){
@@ -163,10 +171,12 @@ function RouterBuilder(modelBuilder, routerOptions) {
                     // 异常操作
                     if (err){
                         res.status(404);
-                        res.json({status: 0, error: err});
+                        console.log(err.stack);
+                        res.json({status: 1, error: err, stack: err.stack});
                     } else {
                         routerOptions.getSuccess(req, docs);
-                        res.json({status: 1, data: docs});
+                        res.status(200);
+                        res.json({status: 0, data: docs});
                     }
                 });
         })
