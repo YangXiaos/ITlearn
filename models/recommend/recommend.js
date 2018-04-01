@@ -28,7 +28,7 @@ var mBuilder = new ModelBuilder(
         createDateTime: {type: Date, default: Date.now},
         desc: {type: String, default: ""},
         title: String,
-        content: String,
+        content: {type: String, default: ""},
         tags: [{type: Number, ref: "users"}],
         upVotes: [{type: Number, ref: "users"}]
     },
