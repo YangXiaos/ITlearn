@@ -17,7 +17,6 @@ var loginFn = function (req, res, next) {
         password: crypto.createHash("md5").update(req.body.password).digest('hex'),
         email: req.body.email
     };
-    console.log(req.session.user);
     User.find(condition, "-__v -password", function (err, user) {
         if (user.length === 1){
             req.session.user = user[0]._doc;
@@ -87,7 +86,17 @@ var userRouteBuilder = new RouteBuilder(
                 mBuilder.model.find({email: req.doc.email}, function (err, doc) {
                     if (doc.length !== 0) {
                         res.status(422);
-                        res.json({status: 0, message: "验证错误"});
+                        res.json({status: 1, message: "邮箱已被占用"});
+                    } else {
+                        next();
+                    }
+                });
+            },
+            function (req, res, next) {
+                mBuilder.model.find({nickname: req.doc.nickname}, function (err, doc) {
+                    if (doc.length !== 0) {
+                        res.status(422);
+                        res.json({status: 1, message: "昵称已被占用"});
                     } else {
                         next();
                     }
