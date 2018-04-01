@@ -30,11 +30,14 @@ var collectionRouteBuilder = new RouterBuilder(
         ],
 
         // 链接
-        pidUel: "/users",
-        resourceUrl: "/:user/collections",
+        pidUrl: "/users",
+        resourceUrl: "/:user/collections/",
 
         // 查询数量限制
-        limit: 10
+        limit: 10,
+
+        // 填充
+        populate: ""
     }
 );
 
