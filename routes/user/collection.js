@@ -29,10 +29,6 @@ var collectionRouteBuilder = new RouterBuilder(
             commonFn.checkUserByModel(Collection)
         ],
 
-        // 链接
-        pidUrl: "/users",
-        resourceUrl: "/:user/collections/",
-
         // 查询数量限制
         limit: 10,
 

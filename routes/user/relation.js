@@ -13,8 +13,8 @@ var Relation = require('../../models/user/relation').model;
 // 关注钩子函数
 var follow = function (req, res, next) {
     var condition = {
-        user: req.query.user,
-        follower: req.query.follower
+        user: parseInt(req.query.user),
+        follower: parseInt(req.query.follower)
     };
     Relation.find(condition, function (err, data) {
         if (data.length === 1) {
@@ -56,8 +56,6 @@ module.exports = new RouteBuilder(
 
         // 填充关联字段
         populate: "user follower",
-        pidUrl: "/users",
-        resourceUrl: "/:user/relations",
         limit: 20
     }
 );
