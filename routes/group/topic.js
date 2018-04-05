@@ -31,10 +31,6 @@ module.exports = new RouteBuilder(
             commonFn.checkUserByModel(Topic)
         ],
 
-        // 链接
-        pidUel: "/users",
-        resourceUrl: "/:group/topics/",
-
         limit: 20
     }
 );
