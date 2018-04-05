@@ -101,7 +101,7 @@ module.exports = new RouteBuilder(
                 fn: joinFn
             }
         ],
-        populate: "user recommend",
+        populate: "user users",
         limit: 20
     }
 );
