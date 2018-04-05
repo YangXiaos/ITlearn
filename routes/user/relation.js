@@ -45,6 +45,8 @@ module.exports = new RouteBuilder(
             }
         ],
 
+
+        populate: "user follower",
         pidUrl: "/users",
         resourceUrl: "/:user/relations",
         limit: 20
