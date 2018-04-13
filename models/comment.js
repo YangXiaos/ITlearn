@@ -24,6 +24,7 @@ var mBuilder = new ModelBuilder(
         content: String,
         recommend: {type: Number, ref: "recommends"},
         group: {type: Number, ref: "groups"},
+        topic: {type: Number, ref: "topics"},
         upVotes: [{type: Number, ref: "users"}],
         pid: {type: Number, ref: "comments"}
     },

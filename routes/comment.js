@@ -31,6 +31,7 @@ module.exports = new RouterBuilder(
             commonFn.checkUserByModel(comment)
         ],
 
+        populate: "user",
         // 限制数量
         limit: 10
     }
