@@ -9,7 +9,7 @@ var async = require('async');
 var CollectionsId = require('../models/collectionsIdSchema');
 var settings = require('../settings');
 
-mongoose.connect('mongodb://localhost/ITearning');
+mongoose.connect('mongodb://localhost/' + settings.dbName);
 
 // 获取条件
 function extractFields(reqConditions, fields) {

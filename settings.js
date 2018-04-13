@@ -13,7 +13,7 @@ var incCollectionList = [
 ];
 
 
-var dbName = "";
+var dbName = "ITDio";
 
 
 // 数据库
@@ -33,3 +33,4 @@ module.exports.version = version;
 module.exports.dirName = __dirname;
 module.exports.incCollectionList = incCollectionList;
 module.exports.sessionConfig = sessionConfig;
+module.exports.dbName = dbName;

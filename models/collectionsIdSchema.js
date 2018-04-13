@@ -7,7 +7,7 @@ var mongoose = require('mongoose');
 var settings = require("../settings");
 
 
-mongoose.connect('mongodb://localhost/ITlearning');
+mongoose.connect('mongodb://localhost/' + settings.dbName);
 
 
 var collectionsIdSchema = new mongoose.Schema({

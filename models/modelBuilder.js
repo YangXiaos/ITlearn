@@ -9,8 +9,9 @@ var mongoose = require('mongoose');
 
 var incIdSchema = require('../models/collectionsIdSchema');
 
+var settings = require('../settings');
 
-mongoose.connect('mongodb://localhost/ITlearning');
+mongoose.connect('mongodb://localhost/' + settings.dbName);
 
 
 // 重置创建对象方法
