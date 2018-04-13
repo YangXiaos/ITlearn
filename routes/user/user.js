@@ -110,8 +110,8 @@ var userRouteBuilder = new RouteBuilder(
 
         // patch 前置钩子
         patchFn: [
-            commonFn.checkIsLogin,
-            checkUserIsSelfOrIsManager
+            // commonFn.checkIsLogin,
+            // checkUserIsSelfOrIsManager
         ],
 
         // delete 前置钩子
@@ -134,6 +134,16 @@ var userRouteBuilder = new RouteBuilder(
                 fn: logout
             }
         ],
+
+
+        // post请求成功
+        postSuccess: function (req, res, data) {
+            req.session.user = data;
+            req.session.save();
+
+            res.status(200);
+            res.json({status: 0, data: data});
+        },
 
         // 查询数量限制
         limit: 10

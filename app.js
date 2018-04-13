@@ -18,7 +18,7 @@ var settings = require('./settings');
 // 用户模块
 var userRouteBuilder = require('./routes/user/user');
 var relationRouteBuilder = require('./routes/user/relation');
-var collectionRouteBuilder = require('./routes/user/relation');
+var collectionRouteBuilder = require('./routes/user/collection');
 
 // 推荐模块
 var recommendRouteBuilder = require('./routes/recommend/recommend');
@@ -38,18 +38,18 @@ app.all("*", function (req, res, next) {
     next();
 });
 
-var secretOrPrivateKey = "ITlearn";  //加密token 校验token时要使用
-app.use(expressJWT({
-    secret: secretOrPrivateKey
-}).unless({
-    path: ['/v1/users/login/',
-        '/v1/users/register/',
-        '/v1/users/',
-        '/v1/tags/',
-        '/v1/recommends/',
-        '/v1/groups/',
-    '/v1/groups/*']  //除了这个地址，其他的URL都需要验证
-}));
+// var secretOrPrivateKey = "ITlearn";  //加密token 校验token时要使用
+// app.use(expressJWT({
+//     secret: secretOrPrivateKey
+// }).unless({
+//     path: ['/v1/users/login/',
+//         '/v1/users/register/',
+//         '/v1/users/',
+//         '/v1/tags/',
+//         '/v1/recommends/',
+//         '/v1/groups/',
+//     '/v1/groups/*']  //除了这个地址，其他的URL都需要验证
+// }));
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

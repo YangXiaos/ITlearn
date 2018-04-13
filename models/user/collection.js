@@ -21,7 +21,7 @@ var mBuilder = new ModelBuilder(
     {
         _id: Number,
         user: {type: Number, ref: "users"},
-        recommend: {type: Number, ref: "recommends"},
+        recommend: {type: Number, ref: "recommends", require: true},
         date: {type: Date, default: Date.now}
     },
     {

@@ -14,9 +14,9 @@ module.exports = new RouterBuilder(
     {
         // post 前置钩子
         postFn: [
-            commonFn.checkIsLogin,
-            commonFn.checkUserByModel(comment),
-            commonFn.setDocUser
+            // commonFn.checkIsLogin,
+            // commonFn.checkUserByModel(comment),
+            // commonFn.setDocUser
         ],
 
         // delete 前置钩子

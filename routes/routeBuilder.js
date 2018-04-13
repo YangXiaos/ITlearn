@@ -31,7 +31,11 @@ function extractFields(reqConditions, fields) {
         }
 
         if (value && typeof field === "object"){
-            params[fieldName] = field.type(value);
+            if (field instanceof Array) {
+                params[fieldName] = field[0].type(value);
+            } else {
+                params[fieldName] = field.type(value);
+            }
         }
     }
 
@@ -73,12 +77,20 @@ function RouterBuilder(modelBuilder, routerOptions) {
         getFn: [],
         patchFn: [],
 
-        postSuccess: function (req, res, doc) {
-            res.json({status: 0, data: doc});
+        postSuccess: function (req, res, data) {
+            res.json({status: 0, data: data});
         },
-        deleteSuccess: function (req, doc) {},
-        getSuccess: function (req, doc) {},
-        patchSuccess: function (req, doc) {},
+        deleteSuccess: function (req, res, result) {
+            // todo 删除结果操作
+            if (result.result.ok === 1) {
+                res.status(204);
+                res.json({});
+            }
+        },
+        getSuccess: function (req, res, doc) {},
+        patchSuccess: function (req, res, result) {
+            res.json({status: 0, result: result});
+        },
 
         populate: "",
         filedList: "-__v",
@@ -125,16 +137,27 @@ function RouterBuilder(modelBuilder, routerOptions) {
         var rule = routerOptions.extraRule[i];
         routerBuilder.router[rule.method](rule.url, rule.fn);
     }
+    this.router.route("/count/").get(function (req, res) {
+        routerBuilder.model.find(req.conditions, function (err, data) {
+            if (err) {
+                res.status(500);
+                res.json({status: 1, error: err, stack: err.stack});
+            } else {
+                res.status(200);
+                res.json({status: 0, error: err, count: data.length});
+            }
+        });
+    });
 
     this.router.route(routerOptions.resourceUrl)
         .post(routerOptions.postFn, function (req, res) {
-            routerBuilder.model.create(req.doc, function (err, doc) {
+            routerBuilder.model.create(req.doc, function (err, data) {
                 // 异常操作
                 if (err) {
                     res.status(404);
                     res.json({error: err, stack: err.stack});
                 } else {
-                    routerOptions.postSuccess(req, res, doc._doc);
+                    routerOptions.postSuccess(req, res, data);
                 }
             });
         })
@@ -145,8 +168,7 @@ function RouterBuilder(modelBuilder, routerOptions) {
                     res.status(404);
                     res.json({error: err});
                 } else {
-                    routerOptions.deleteSuccess(req, result);
-                    res.json(result);
+                    routerOptions.deleteSuccess(req, res, result);
                 }
             });
         })
@@ -195,14 +217,13 @@ function RouterBuilder(modelBuilder, routerOptions) {
                 update = {$set: req.doc};
             }
 
-            routerBuilder.model.update(req.conditions, update, function (err, docs) {
+            routerBuilder.model.update(req.conditions, update, function (err, result) {
                 // 异常操作
                 if (err){
                     res.status(404);
                     res.json({error: err});
                 } else {
-                    routerOptions.getSuccess(req, docs);
-                    res.json(docs);
+                    routerOptions.getSuccess(req, res, result);
                 }
             });
 

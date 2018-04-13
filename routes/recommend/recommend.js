@@ -9,6 +9,47 @@ var commonFn = require('../../routes/commonFn');
 var Recommend = require('../../models/recommend/recommend').model;
 
 
+var vote = function (req, res, next) {
+
+    var condition = {
+        _id: req.query.recommend
+    };
+    var user = parseInt(req.query.user);
+    var update = {$addToSet: {upVotes: user}};
+
+    Recommend.findOne(condition)
+        .then(function (data) {
+            if (data) {
+                if (data.upVotes.contains(user)) {
+                    res.status(200);
+                    res.json({status: 0, isVote: 0, message: "已经点过赞了"});
+
+                } else {
+
+                    data.update(update)
+                        .then(function (result) {
+                            // todo 结果测试
+                            res.json({status: 0, isVote: 1, message: "点赞成功", result: result});
+                        }).catch(function (err) {
+                            res.status(500);
+                            res.json({status: 1, message: "异常problem"});
+                        });
+                }
+            } else {
+                // todo 设置状态码
+                res.status(404);
+                res.json({status: 1, message: "没有该推荐"});
+            }
+        })
+        .catch(function (err) {
+            res.status(500);
+            console.log(err.stack);
+            res.json({status: 1, message: "异常", stack: err.stack})
+        })
+
+};
+
+
 var recommendRouterBuilder = new RouterBuilder(
     recommendModelBuilder,
     {
@@ -30,6 +71,17 @@ var recommendRouterBuilder = new RouterBuilder(
             commonFn.checkUserByModel(Recommend)
         ],
 
+        // 配置 前置钩子
+        extraRule: [
+            // 登录方法配置
+            {
+                method: "get",
+                url: "/vote/",
+                fn: vote
+            }
+        ],
+
+        populate: "user tags",
         // 查询数量限制
         limit: 10
 

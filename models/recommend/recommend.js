@@ -29,7 +29,7 @@ var mBuilder = new ModelBuilder(
         desc: {type: String, default: ""},
         title: String,
         content: {type: String, default: ""},
-        tags: [{type: Number, ref: "users"}],
+        tags: [{type: Number, ref: "tags"}],
         upVotes: [{type: Number, ref: "users"}]
     },
     {

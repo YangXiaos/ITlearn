@@ -51,8 +51,12 @@ var checkUserByModel = function (m) {
             next();
         } else {
             // 检查是否为模型队像中的user
-            m.findOne(req.conditions, function (err, doc) {
-                if (doc.user === req.session.user._id) {
+            m.findOne(req.conditions, function (err, data) {
+                if (!data){
+                    // 用户不对应处理
+                    res.status(401);
+                    res.json({status: 0, message: "用户未登录"})
+                } else if (data.user === req.session.user._id) {
                     next();
                 } else {
                     // 用户不对应处理

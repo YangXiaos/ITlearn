@@ -3,6 +3,8 @@
 * user应用
 * 关注联系collection 路由
 */
+
+var async = require('async');
 var RouteBuilder = require('../routeBuilder');
 var mBuilder = require('../../models/user/relation').mBuilder;
 var commonFn = require('../../routes/commonFn');
@@ -19,7 +21,7 @@ var follow = function (req, res, next) {
     Relation.find(condition, function (err, data) {
         if (data.length === 1) {
             Relation.deleteOne(condition).then(function (err, result) {
-                res.send({status: 0, message: "取消关注成功", result: result});
+                res.json({status: 0, message: "取消关注成功", result: result});
             });
         } else {
             Relation.create(condition, function (err, data) {
@@ -27,6 +29,29 @@ var follow = function (req, res, next) {
             });
         }
     });
+};
+
+// 查看粉丝数钩子函数
+var count = function (req, res, next) {
+
+    async.parallel([
+        // 正在关注
+        function (callback) {
+            Relation.find({user: parseInt(req.query.user)}, function (err, data) {
+                callback(null, data);
+            });
+        },
+
+        // 关注者
+        function (callback) {
+            Relation.find({follower: parseInt(req.query.user)}, function (err, data) {
+                callback(null, data);
+            })
+        }
+    ], function (err, result) {
+        res.json({status: 0, message: "获取请求成功", following: result[0], follower: result[1]});
+    });
+
 };
 
 
@@ -51,6 +76,11 @@ module.exports = new RouteBuilder(
                 method: "get",
                 url: "/follow/",
                 fn: follow
+            },
+            {
+                method: "get",
+                url: "/user/",
+                fn: count
             }
         ],
 

@@ -17,14 +17,14 @@ var Group = require('../../models/group/group').model;
  */
 function joinFn(req, res, next) {
 
-    var condition = {_id: req.params.group};
-    var joinUpdate = {$addToSet: {users: req.sessions.user._id}};
-    var outUpdate = {$pull: {users: req.sessions.user._id}};
+    var condition = {_id: req.query.group};
+    var joinUpdate = {$addToSet: {users: req.query.user}};
+    var outUpdate = {$pull: {users: req.query.user}};
     Group.find(condition, function (err, data) {
         if (err) {
             //
             res.status(404);
-            res.send({status: 1, message: err});
+            res.json({status: 1, message: err});
 
         } else if(data.length === 1) {
             var group = data[0];
@@ -36,15 +36,15 @@ function joinFn(req, res, next) {
                     // todo update返回结果判定
                     if (err) {
                         res.status(500);
-                        res.send({status: 1, message: "系统异常"})
+                        res.json({status: 1, message: "系统异常"});
                     } else if (result.n !== 0){
                         // 修改成功
                         res.status(200);
-                        res.send({status: 0, message: "退出成功"});
+                        res.json({status: 0, exit: 0, message: "退出成功"});
                     } else {
                         // 服务器异常
                         res.status(500);
-                        res.send({status: 1, message: "系统异常"});
+                        res.json({status: 1, message: "系统异常"});
                     }
                 });
             } else {
@@ -53,13 +53,13 @@ function joinFn(req, res, next) {
                     // todo update返回结果判定
                     if (err) {
                         res.status(500);
-                        res.send({status: 1, message: "系统异常"});
+                        res.json({status: 1, message: "系统异常"});
                     } else if (result.n !== 0){
                         res.status(200);
-                        res.send({status: 0, message: "加入成功"});
+                        res.json({status: 0, exit: 1, message: "加入成功"});
                     } else {
                         res.status(500);
-                        res.send({status: 1, message: "系统异常"});
+                        res.json({status: 1, message: "系统异常"});
                     }
                 });
             }
@@ -97,7 +97,7 @@ module.exports = new RouteBuilder(
             // 登录方法配置
             {
                 method: "get",
-                url: "/:group/join/",
+                url: "/join/",
                 fn: joinFn
             }
         ],

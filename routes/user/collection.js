@@ -9,7 +9,7 @@ var commonFn = require('../../routes/commonFn');
 var Collection = require('../../models/user/collection').model;
 
 
-var collectionRouteBuilder = new RouterBuilder(
+module.exports = new RouterBuilder(
     collectionModelBuilder,
     {
         // get 前置路由
@@ -25,17 +25,11 @@ var collectionRouteBuilder = new RouterBuilder(
 
         // delete 前置路由
         deleteFn: [
-            commonFn.checkIsLogin,
-            commonFn.checkUserByModel(Collection)
+            // commonFn.checkIsLogin,
+            // commonFn.checkUserByModel(Collection)
         ],
-
-        // 查询数量限制
-        limit: 10,
-
-        // 填充
-        populate: ""
+        // 填充, 查询数量限制
+        populate: "user recommend",
+        limit: 10
     }
 );
-
-
-module.exports = collectionRouteBuilder;

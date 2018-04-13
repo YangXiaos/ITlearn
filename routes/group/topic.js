@@ -31,6 +31,8 @@ module.exports = new RouteBuilder(
             commonFn.checkUserByModel(Topic)
         ],
 
+        //填充
+        populate: "user group",
         limit: 20
     }
 );

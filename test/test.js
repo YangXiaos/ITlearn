@@ -114,6 +114,9 @@ UserModel.create({name: "dio"}, function (err, user) {
     UserModel.find({}, function (err, users) {
         console.log(err, users)
     })
-})
+});
 
-
+UserModel.findOne({_id: 9998988})
+    .then(function (data) {
+        console.log();
+    });
