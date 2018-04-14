@@ -80,8 +80,8 @@ function RouterBuilder(modelBuilder, routerOptions) {
         getFn: [],
         patchFn: [],
 
-        postSuccess: function (req, res, data) {
-            res.json({status: 0, data: data});
+        postSuccess: function (req, res, data, callback) {
+            callback(null, data);
         },
         deleteSuccess: function (req, res, result) {
             // todo 删除结果操作
@@ -90,9 +90,15 @@ function RouterBuilder(modelBuilder, routerOptions) {
                 res.json({});
             }
         },
-        getSuccess: function (req, res, doc) {},
+        getSuccess: function (req, res, data, callback) {
+            callback(null, data);
+        },
         patchSuccess: function (req, res, result) {
-            res.json({status: 0, result: result});
+            // todo 删除结果操作
+            if (result.result.ok === 1) {
+                res.status(201);
+                res.json({status: 0});
+            }
         },
 
         populate: "",
@@ -161,7 +167,21 @@ function RouterBuilder(modelBuilder, routerOptions) {
                     console.log(err.stack);
                     res.json({error: err, stack: err.stack});
                 } else {
-                    routerOptions.postSuccess(req, res, data);
+
+
+                    // 数据冷处理
+                    async.waterfall([function (callback) {
+                        routerOptions.postSuccess(req, res, data, callback);
+                    }], function (err, data) {
+                        if (err){
+                            console.log(err.stack);
+                            res.status(500);
+                            res.json({status: 1, err: err});
+                        } else {
+                            res.status(200);
+                            res.json({status: 0, data: data});
+                        }
+                    });
                 }
             });
         })
@@ -181,10 +201,10 @@ function RouterBuilder(modelBuilder, routerOptions) {
             // option设定, 确认skip limit查询,
             var options = {limit: routerOptions.limit, sort: {_id: -1}};
             if (req.query.page_size) {
-                options.limit = Number(req.query.page_size)
+                options.limit = Number(req.query.page_size);
             }
             if (req.query.page) {
-                options.skip = (Number(req.query.page) - 1) * routerOptions.limit
+                options.skip = (Number(req.query.page) - 1) * Number(req.query.page_size)
             }
             if (req.query.sort) {
                 options.sort[req.query.sort] = Number(req.query.sortType);
@@ -193,16 +213,27 @@ function RouterBuilder(modelBuilder, routerOptions) {
             routerBuilder.model
                 .find(req.conditions, req.filedList, options)
                 .populate(routerOptions.populate)
-                .exec(function (err, docs) {
+                .exec(function (err, data) {
                     // 异常操作
                     if (err){
                         res.status(404);
                         console.log(err.stack);
                         res.json({status: 1, error: err, stack: err.stack});
                     } else {
-                        routerOptions.getSuccess(req, docs);
-                        res.status(200);
-                        res.json({status: 0, data: docs});
+
+                        // 数据冷处理
+                        async.waterfall([function (callback) {
+                            routerOptions.getSuccess(req, res, data, callback);
+                        }], function (err, data) {
+                            if (err){
+                                console.log(err.stack);
+                                res.status(500);
+                                res.json({status: 1, err: err});
+                            } else {
+                                res.status(200);
+                                res.json({status: 0, data: data});
+                            }
+                        });
                     }
                 });
         })
@@ -227,7 +258,7 @@ function RouterBuilder(modelBuilder, routerOptions) {
                     res.status(404);
                     res.json({error: err});
                 } else {
-                    routerOptions.getSuccess(req, res, result);
+                    routerOptions.patchSuccess(req, res, result);
                 }
             });
 

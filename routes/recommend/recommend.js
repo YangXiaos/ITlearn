@@ -117,7 +117,11 @@ var recommendRouterBuilder = new RouterBuilder(
                 fn: vote
             }
         ],
+        
+        postSuccess: function (req, res, data) {
 
+        },
+        
         populate: "user tags",
         // 查询数量限制
         limit: 10

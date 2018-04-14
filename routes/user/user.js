@@ -137,12 +137,10 @@ var userRouteBuilder = new RouteBuilder(
 
 
         // post请求成功
-        postSuccess: function (req, res, data) {
+        postSuccess: function (req, res, data, callback) {
             req.session.user = data;
             req.session.save();
-
-            res.status(200);
-            res.json({status: 0, data: data});
+            callback(null, data);
         },
 
         // 查询数量限制
