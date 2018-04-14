@@ -31,6 +31,13 @@ module.exports = new RouterBuilder(
             commonFn.checkUserByModel(comment)
         ],
 
+        // 数据冷处理
+        postSuccess: function (req, res, data, callback) {
+            data.populate("user", function (err, data) {
+                callback(err, data);
+            })
+        },
+
         populate: "user",
         // 限制数量
         limit: 10
