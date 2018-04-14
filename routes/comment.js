@@ -7,7 +7,17 @@ var RouterBuilder = require('./routeBuilder');
 var commonFn = require('./commonFn');
 
 var comment = require('../models/comment').model;
-
+var populate = [{
+    path: "pid",
+    model: "comments",
+    populate: [{
+        path: "user",
+        model: "users"
+    }]
+}, {
+    path: "user",
+    model: "users"
+}];
 
 module.exports = new RouterBuilder(
     commentModelBuilder,
@@ -33,22 +43,12 @@ module.exports = new RouterBuilder(
 
         // 数据冷处理
         postSuccess: function (req, res, data, callback) {
-            data.populate("user", function (err, data) {
+            data.populate(populate, function (err, data) {
                 callback(err, data);
             })
         },
 
-        populate: [{
-            path: "pid",
-            model: "comments",
-            populate: [{
-                path: "user",
-                model: "users"
-            }]
-        },{
-            path: "user",
-            model: "users"
-        }],
+        populate: populate,
         // 限制数量
         limit: 10
     }
