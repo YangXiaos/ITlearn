@@ -52,7 +52,7 @@ var vote = function (req, res, next) {
 var beforePost = function (req, res, next) {
     function createTag(tagName, callback){
         Tag.create({name: tagName}, function (err, data) {
-                callback(null, data);
+            callback(null, data);
         });
     }
 
@@ -117,11 +117,7 @@ var recommendRouterBuilder = new RouterBuilder(
                 fn: vote
             }
         ],
-        
-        postSuccess: function (req, res, data) {
 
-        },
-        
         populate: "user tags",
         // 查询数量限制
         limit: 10

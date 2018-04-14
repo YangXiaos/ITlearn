@@ -167,8 +167,7 @@ function RouterBuilder(modelBuilder, routerOptions) {
                     console.log(err.stack);
                     res.json({error: err, stack: err.stack});
                 } else {
-
-
+                    
                     // 数据冷处理
                     async.waterfall([function (callback) {
                         routerOptions.postSuccess(req, res, data, callback);

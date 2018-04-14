@@ -29,7 +29,19 @@ module.exports = new RouterBuilder(
             // commonFn.checkUserByModel(Collection)
         ],
         // 填充, 查询数量限制
-        populate: "user recommend",
+        populate: {
+            path:"recommend",
+            model: "recommends",
+            populate: [{
+                    path: "user",
+                    model: "users"
+                },
+                {
+                    path: "tags",
+                    model: "tags"
+                }
+            ]
+        },
         limit: 10
     }
 );
