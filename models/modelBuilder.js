@@ -16,8 +16,7 @@ mongoose.connect('mongodb://localhost/' + settings.dbName);
 
 // 重置创建对象方法
 function resetCreateFn(schema) {
-    schema.statics.create = function (doc, _cb) {
-
+    schema.statics.create = function (doc, cb) {
         var Model = this;
         async.waterfall([
             function (callback) {
@@ -29,12 +28,14 @@ function resetCreateFn(schema) {
                 doc["_id"] = id;
 
                 // 保存文档
-                var entity = new Model(doc);
-                entity.save();
-                callback(null, entity);
+                var entity =  new Model(doc);
+                entity.save(function (err, res) {
+                    callback(err, entity);
+                });
+
             }
         ], function (err, doc) {
-            _cb(err, doc);
+            cb(err, doc);
         });
     };
 }

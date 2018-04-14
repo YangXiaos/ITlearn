@@ -2,12 +2,13 @@
 * Create By mryang On 17-8-26
 * 推荐模块 推荐模型路由
 */
+var async = require('async');
 var recommendModelBuilder = require('../../models/recommend/recommend').mBuilder;
 var RouterBuilder = require('../routeBuilder');
 var commonFn = require('../../routes/commonFn');
 
 var Recommend = require('../../models/recommend/recommend').model;
-
+var Tag = require('../../models/recommend/tag').model;
 
 var vote = function (req, res, next) {
 
@@ -23,9 +24,7 @@ var vote = function (req, res, next) {
                 if (data.upVotes.contains(user)) {
                     res.status(200);
                     res.json({status: 0, isVote: 0, message: "已经点过赞了"});
-
                 } else {
-
                     data.update(update)
                         .then(function (result) {
                             // todo 结果测试
@@ -50,13 +49,51 @@ var vote = function (req, res, next) {
 };
 
 
+var beforePost = function (req, res, next) {
+    function createTag(tagName, callback){
+        Tag.create({name: tagName}, function (err, data) {
+                callback(null, data);
+        });
+    }
+
+    var fns = [];
+    for (var i = 0; i < req.body.tags.length; i++) {
+        var tagName = req.doc.tags[i];
+        var fn = (function (tagName) {
+            return function (callback) {
+                // 查询tag
+                Tag.findOne({name: tagName})
+                    .then(function (data) {
+                        if (data) {
+                            callback(null, data._id);
+                        } else {
+                            createTag(tagName, function (err, data) {
+                                callback(err, data._id);
+                            });
+                        }
+                    });
+            }
+        })(tagName);
+        fns.push(fn);
+    }
+
+    async.parallel(
+        fns,
+        function(err, results){
+            req.doc.tags = results;
+            next();
+        });
+};
+
+
 var recommendRouterBuilder = new RouterBuilder(
     recommendModelBuilder,
     {
         // post 前置路由
         postFn: [
-            commonFn.checkIsLogin,
-            commonFn.setDocUser
+            beforePost
+            // commonFn.checkIsLogin,
+            // commonFn.setDocUser
         ],
 
         // delete 前置路由

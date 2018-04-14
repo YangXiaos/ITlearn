@@ -32,6 +32,9 @@ function extractFields(reqConditions, fields) {
 
         if (value && typeof field === "object"){
             if (field instanceof Array) {
+                if (fieldName === 'tags') {
+                    continue;
+                }
                 params[fieldName] = field[0].type(value);
             } else {
                 params[fieldName] = field.type(value);
@@ -155,6 +158,7 @@ function RouterBuilder(modelBuilder, routerOptions) {
                 // 异常操作
                 if (err) {
                     res.status(404);
+                    console.log(err.stack);
                     res.json({error: err, stack: err.stack});
                 } else {
                     routerOptions.postSuccess(req, res, data);
