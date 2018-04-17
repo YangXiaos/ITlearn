@@ -20,13 +20,15 @@ var md5 = require('../../settings').md5;
  */
 var mBuilder = new ModelBuilder(
     {
-        email: String,
-        nickname: String,
+        email: {type: String, require: true, unique: true},
+        nickname: {type: String, require: true, unique: true},
         password: String,
         headImg: {type: String, default: "/media/headImg/default.jpg"},
         sex: {type: Number, default: 1},
         desc: {type: String, default: ""},
-        isManager: {type: Boolean, default: false}
+        isManager: {type: Boolean, default: false},
+
+        createDateTime: {type: Date, default: Date.now}
     },
     {
         collectionName: "users",

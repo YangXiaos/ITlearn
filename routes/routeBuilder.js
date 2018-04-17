@@ -30,6 +30,13 @@ function extractFields(reqConditions, fields) {
             continue;
         }
 
+        if (typeof field === "object") {
+            if(field.type === Boolean && value !== undefined) {
+                params[fieldName] = value;
+                continue;
+            }
+        }
+
         if (value && typeof field === "object"){
             if (field instanceof Array) {
                 if (fieldName === 'tags') {
@@ -40,6 +47,8 @@ function extractFields(reqConditions, fields) {
                 params[fieldName] = field.type(value);
             }
         }
+
+
     }
 
     return params;
@@ -95,7 +104,8 @@ function RouterBuilder(modelBuilder, routerOptions) {
         },
         patchSuccess: function (req, res, result) {
             // todo 删除结果操作
-            if (result.result.ok === 1) {
+            console.log(result);
+            if (result.ok === 1) {
                 res.status(201);
                 res.json({status: 0});
             }
@@ -250,7 +260,7 @@ function RouterBuilder(modelBuilder, routerOptions) {
             } else {
                 update = {$set: req.doc};
             }
-
+            console.log(update);
             routerBuilder.model.update(req.conditions, update, function (err, result) {
                 // 异常操作
                 if (err){

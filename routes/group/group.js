@@ -77,20 +77,20 @@ module.exports = new RouteBuilder(
     {
         // post 前置钩子
         postFn: [
-            commonFn.checkIsLogin,
-            commonFn.setDocUser
+            // commonFn.checkIsLogin,
+            // commonFn.setDocUser
         ],
 
         // patch 前置钩子
         patchFn: [
-            commonFn.checkIsLogin,
-            commonFn.checkUserByModel(Group)
+            // commonFn.checkIsLogin,
+            // commonFn.checkUserByModel(Group)
         ],
 
         // delete 前置钩子
         deleteFn: [
-            commonFn.checkIsLogin,
-            commonFn.checkUserByModel(Group)
+            // commonFn.checkIsLogin,
+            // commonFn.checkUserByModel(Group)
         ],
         // 配置 前置钩子
         extraRule: [

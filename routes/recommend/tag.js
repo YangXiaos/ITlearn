@@ -12,17 +12,17 @@ var tagRouterBuilder = new RouterBuilder(
     {
         // post 前置路由
         postFn: [
-            commonFn.checkIsManager
+            // commonFn.checkIsManager
         ],
 
         // patch 前置路由
         patchFn:[
-            commonFn.checkIsManager
+            // commonFn.checkIsManager
         ],
 
         // delete 前置路由
         deleteFn: [
-            commonFn.checkIsManager
+            // commonFn.checkIsManager
         ],
 
         // 查询数量限制

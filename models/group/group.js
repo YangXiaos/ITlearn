@@ -30,7 +30,8 @@ var mBuilder = new ModelBuilder(
         },
         createDateTime: {type: Date, default: Date.now},
         user: {type: Number, ref: 'users'},
-        users: [{type: Number, ref: 'users'}]
+        users: [{type: Number, ref: 'users'}],
+        isPass: {type: Boolean, default: true}
     },
     {
         collectionName: "groups",

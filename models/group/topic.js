@@ -39,7 +39,8 @@ var mBuilder = new ModelBuilder(
             required: true
         },
         createDateTime: {type: Date, default: Date.now},
-        upUsers: [{type: Number, ref: 'users'}]
+        upUsers: [{type: Number, ref: 'users'}],
+        isPass: {type: Boolean, default: true}
     },
     {
         collectionName: "topics",

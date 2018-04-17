@@ -9,6 +9,7 @@ var commonFn = require('../../routes/commonFn');
 
 var Recommend = require('../../models/recommend/recommend').model;
 var Tag = require('../../models/recommend/tag').model;
+var sendNew = require('../../routes/user/new').sendNew;
 
 var vote = function (req, res, next) {
 
@@ -29,6 +30,14 @@ var vote = function (req, res, next) {
                         .then(function (result) {
                             // todo 结果测试
                             res.json({status: 0, isVote: 1, message: "点赞成功", result: result});
+
+                            // 创建动态
+                            var new_ = {
+                                user: user,
+                                recommend: Number(req.query.recommend),
+                                type: 3
+                            };
+                            sendNew(new_);
                         }).catch(function (err) {
                             res.status(500);
                             res.json({status: 1, message: "异常problem"});
@@ -98,14 +107,14 @@ var recommendRouterBuilder = new RouterBuilder(
 
         // delete 前置路由
         deleteFn: [
-            commonFn.checkIsLogin,
-            commonFn.checkUserByModel(Recommend)
+            // commonFn.checkIsLogin,
+            // commonFn.checkUserByModel(Recommend)
         ],
 
         // patch 前置路由方法
         patchFn: [
-            commonFn.checkIsLogin,
-            commonFn.checkUserByModel(Recommend)
+            // commonFn.checkIsLogin,
+            // commonFn.checkUserByModel(Recommend)
         ],
 
         // 配置 前置钩子
@@ -117,6 +126,19 @@ var recommendRouterBuilder = new RouterBuilder(
                 fn: vote
             }
         ],
+
+        postSuccess: function (req, res, data, callback) {
+            callback(null, data);
+
+            // 创建动态
+            var new_ = {
+                user: data.user,
+                recommend: data._id,
+                type: 1,
+                createDateTime: data.createDateTime
+            };
+            sendNew(new_);
+        },
 
         populate: "user tags",
         // 查询数量限制

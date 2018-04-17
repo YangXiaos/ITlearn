@@ -13,12 +13,15 @@ Array.prototype.contains = function (needle) {
     }
     return false;
 };
+
+
 var settings = require('./settings');
 
 // 用户模块
 var userRouteBuilder = require('./routes/user/user');
 var relationRouteBuilder = require('./routes/user/relation');
 var collectionRouteBuilder = require('./routes/user/collection');
+var newRouteBuilder = require('./routes/user/new');
 
 // 推荐模块
 var recommendRouteBuilder = require('./routes/recommend/recommend');
@@ -80,6 +83,7 @@ app.use(session({
 app.use(userRouteBuilder.getRouterPath(), userRouteBuilder.router);
 app.use(relationRouteBuilder.getRouterPath(), relationRouteBuilder.router);
 app.use(collectionRouteBuilder.getRouterPath(), collectionRouteBuilder.router);
+app.use(newRouteBuilder.getRouterPath(), newRouteBuilder.router);
 
 // 评论模块
 app.use(commentRouteBuilder.getRouterPath(), commentRouteBuilder.router);

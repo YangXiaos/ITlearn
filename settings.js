@@ -9,7 +9,8 @@ var incCollectionList = [
     "recommends",
     "tags",
     "topics",
-    "groups"
+    "groups",
+    "news"
 ];
 
 

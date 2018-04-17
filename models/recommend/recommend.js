@@ -30,7 +30,8 @@ var mBuilder = new ModelBuilder(
         title: String,
         content: {type: String, default: ""},
         tags: [{type: Number, ref: "tags"}],
-        upVotes: [{type: Number, ref: "users"}]
+        upVotes: [{type: Number, ref: "users"}],
+        isPass: {type: Boolean, default: true}
     },
     {
         collectionName: "recommends",
