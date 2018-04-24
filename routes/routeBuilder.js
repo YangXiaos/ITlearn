@@ -12,13 +12,17 @@ var settings = require('../settings');
 mongoose.connect('mongodb://localhost/' + settings.dbName);
 
 // 获取条件
-function extractFields(reqConditions, fields) {
+function extractFields(reqConditions, fields, extractType) {
     var params = {};
 
     // 循环条件
     for(var fieldName in fields){
         var field =  fields[fieldName];
         var value = reqConditions[fieldName];
+
+        if (fieldName === "tags" && extractType === "query"){
+            params.tags = Number(value);
+        }
 
         if (value instanceof Array) {
             params[fieldName] = value;
@@ -47,8 +51,6 @@ function extractFields(reqConditions, fields) {
                 params[fieldName] = field.type(value);
             }
         }
-
-
     }
 
     return params;
@@ -140,7 +142,7 @@ function RouterBuilder(modelBuilder, routerOptions) {
      * @param next
      */
     this.setup = function (req, res, next) {
-        req.conditions = extractFields(req.query, fields);
+        req.conditions = extractFields(req.query, fields, "query");
         req.doc = extractFields(req.body, fields);
         req.params = extractFields(req.params, fields);
         req.filedList = routerOptions.filedList;
@@ -218,7 +220,7 @@ function RouterBuilder(modelBuilder, routerOptions) {
             if (req.query.sort) {
                 options.sort[req.query.sort] = Number(req.query.sortType);
             }
-
+            console.log(req.conditions);
             routerBuilder.model
                 .find(req.conditions, req.filedList, options)
                 .populate(routerOptions.populate)
