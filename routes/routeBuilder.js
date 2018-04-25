@@ -142,7 +142,12 @@ function RouterBuilder(modelBuilder, routerOptions) {
      * @param next
      */
     this.setup = function (req, res, next) {
-        req.conditions = extractFields(req.query, fields, "query");
+        if("$" in req.query) {
+            req.conditions = JSON.parse(req.query.$);
+        } else {
+            req.conditions = extractFields(req.query, fields, "query");
+        }
+
         req.doc = extractFields(req.body, fields);
         req.params = extractFields(req.params, fields);
         req.filedList = routerOptions.filedList;
@@ -150,7 +155,7 @@ function RouterBuilder(modelBuilder, routerOptions) {
         // 获取查询规则
         req.conditions= Object.assign(req.params, req.conditions);
 
-        console.log("query:", req.conditions);
+        console.log("console:", req.conditions);
         console.log("doc", req.doc);
         next();
     };
