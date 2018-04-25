@@ -20,7 +20,7 @@ function extractFields(reqConditions, fields, extractType) {
         var field =  fields[fieldName];
         var value = reqConditions[fieldName];
 
-        if (fieldName === "tags" && extractType === "query"){
+        if (fieldName === "tags" && extractType === "query" && value){
             params.tags = Number(value);
         }
 
@@ -149,6 +149,9 @@ function RouterBuilder(modelBuilder, routerOptions) {
 
         // 获取查询规则
         req.conditions= Object.assign(req.params, req.conditions);
+
+        console.log("query:", req.conditions);
+        console.log("doc", req.doc);
         next();
     };
 
