@@ -10,7 +10,8 @@ var incCollectionList = [
     "tags",
     "topics",
     "groups",
-    "news"
+    "news",
+    "projects"
 ];
 
 
