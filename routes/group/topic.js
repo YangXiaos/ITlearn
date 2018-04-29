@@ -5,6 +5,7 @@
 var RouteBuilder = require('../routeBuilder');
 var mBuilder = require('../../models/group/topic').mBuilder;
 var commonFn = require('../../routes/commonFn');
+var sendFollowerDynamic = require("../user/new").sendFollowerDynamic;
 
 var Topic = require('../../models/group/topic').model;
 
@@ -30,6 +31,15 @@ module.exports = new RouteBuilder(
             // commonFn.checkIsLogin,
             // commonFn.checkUserByModel(Topic)
         ],
+
+        postSuccess: function (req, res, data, callback) {
+            // 创建动态
+            sendFollowerDynamic({
+                newType: 5,
+                topic: data._id,
+                sender: data.user});
+            callback(null, data);
+        },
 
         //填充
         populate: "user group",

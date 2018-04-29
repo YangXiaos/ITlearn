@@ -6,10 +6,10 @@ var async = require('async');
 var recommendModelBuilder = require('../../models/recommend/recommend').mBuilder;
 var RouterBuilder = require('../routeBuilder');
 var commonFn = require('../../routes/commonFn');
+var sendFollowerDynamic = require("../user/new").sendFollowerDynamic;
 
 var Recommend = require('../../models/recommend/recommend').model;
 var Tag = require('../../models/recommend/tag').model;
-var sendNew = require('../../routes/user/new').sendNew;
 
 var vote = function (req, res, next) {
 
@@ -128,16 +128,12 @@ var recommendRouterBuilder = new RouterBuilder(
         ],
 
         postSuccess: function (req, res, data, callback) {
-            callback(null, data);
-
             // 创建动态
-            var new_ = {
-                user: data.user,
+            sendFollowerDynamic({
+                newType: 5,
                 recommend: data._id,
-                type: 1,
-                createDateTime: data.createDateTime
-            };
-            sendNew(new_);
+                sender: data.user});
+            callback(null, data);
         },
 
         populate: "user tags",

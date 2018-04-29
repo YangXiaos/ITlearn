@@ -5,11 +5,15 @@
 
 var newModelBuilder = require('../../models/user/new').mBuilder;
 var RouterBuilder = require('../routeBuilder');
+var copyObj = require("../../units").copyObj;
 
 var New = require('../../models/user/new').model;
 var Relation = require('../../models/user/relation').model;
 var Recommend = require('../../models/recommend/recommend').model;
 var Topic = require('../../models/group/topic').model;
+var Group = require('../../models/group/topic').model;
+var Project = require('../../models/project/project').model;
+
 var Comment = require('../../models/comment').model;
 
 module.exports = new RouterBuilder(
@@ -38,59 +42,88 @@ module.exports = new RouterBuilder(
     }
 );
 
-var sendFollowerNew = function (new_) {
+
+/**
+ * 创建动态
+ * @param new_
+ */
+var createNew = function (new_) {
+    delete new_.createDateTime;
+    New.findOne(new_, function (err, data) {
+        if (data === null) {
+            New.create(new_);
+        }
+    })
+};
+
+
+/**
+ * 创建个人动态
+ * @param new_
+ * @param userId
+ */
+var sendPersonDynamic = function (new_, userId) {
+    var model, condition;
+    if (new_.newType === 3) {
+        model = Comment;
+        condition = {_id: new_.pid};
+    } else if (new_.hasOwnProperty("recommend")) {
+        model = Recommend;
+        condition = {_id: new_.recommend};
+    } else if(new_.hasOwnProperty("topic")) {
+        model = Topic;
+        condition = {_id: new_.topic};
+    } else if(new_.hasOwnProperty("project")) {
+        model = Project;
+        condition = {_id: new_.project};
+    }
+    model.findOne(condition)
+        .then(function (data) {
+            if(new_.sender !== data.user) {
+                new_.receiver = data.user;
+                new_.type = 0;
+                createNew(new_);
+            }
+        });
+};
+
+
+/**
+ * 创建关注者动态
+ * @param new_
+ */
+var sendFollowerDynamic = function (new_) {
     var condition = {follower: new_.user};
     Relation.find(condition, function (err, data) {
         data.forEach(function (relation) {
-            new_.receiver = relation.user;
-            console.log(new_);
+            var new1 = copyObj(new_);
+            new1.receiver = relation.user;
+            new1.type = 1;
             createNew(new_);
         });
     });
 };
 
 
-var sendAuthorNew = function (new_, user) {
-    var condition = {user: user};
-    new_.receiver = user;
-    console.log(new_);
+/**
+ * 创建系统动态
+ * @param new_
+ * @param userId
+ */
+var sendSystemDynamic = function (new_, userId) {
+    new_.receiver = userId;
+    new_.type = 2;
     createNew(new_);
 };
 
 
-var createNew = function (new_) {
-    delete new_.createDateTime;
-    New.findOne(new_, function (err, data) {
-        if (data === null) {
-            New.create(new_, function (err, data) {
-            });
-        }
-    })
-};
-
-
 var sendNew = function (new_) {
-    if (new_.type in [1, 4]){
-        sendFollowerNew(new_);
-    } else if (new_.hasOwnProperty("recommend") || new_.hasOwnProperty("topic")){
-        var Model, condition = {};
-        if(new_.hasOwnProperty("recommend")) {
-            Model = Recommend;
-            condition._id = new_.recommend;
-        } else {
-            Model = Topic;
-            condition._id = new_.topic;
-        }
-
-        console.log(condition);
-        // 判断是否给作者发送动态
-        Model.findOne(condition, function (err, data) {
-            if(!(data.user === new_.user)) {
-                sendAuthorNew(new_, data.user);
-                sendFollowerNew(new_);
-            }
-        });
-    }
 };
+
+
+
 
 module.exports.sendNew = sendNew;
+module.exports.sendPersonDynamic = sendPersonDynamic;
+module.exports.sendFollowerDynamic = sendFollowerDynamic;
+module.exports.sendSystemDynamic = sendSystemDynamic;

@@ -5,6 +5,7 @@
 var RouteBuilder = require('../routeBuilder');
 var mBuilder = require('../../models/project/project').mBuilder;
 var commonFn = require('../../routes/commonFn');
+var sendFollowerDynamic = require("../user/new").sendFollowerDynamic;
 var getJson = require('../../units').getJson;
 
 /*
@@ -34,7 +35,6 @@ module.exports = new RouteBuilder(
                         if(obj.message && obj.message === ("Not Found")){
                             res.json({status: 0, message: "项目url异常"});
                         } else {
-                            console.log("next");
                             next();
                         }
                     } else {
@@ -50,6 +50,13 @@ module.exports = new RouteBuilder(
             // commonFn.checkUserByModel(Collection)
         ],
 
+        postSuccess: function (req, res, data, callback) {
+            sendFollowerDynamic({
+                newType: 5,
+                project: data._id,
+                sender: data.user});
+            callback(null, data);
+        },
 
         // 填充, 查询数量限制
         populate: {

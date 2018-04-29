@@ -13,17 +13,6 @@ var ModelBuilder = require('../modelBuilder');
  *  @field: _id {@Number} 自增id
  *  @field: user {@type: Number} 用户关联ref
  *
- *  {
- *      1: "发表了某个文章", 只需对粉丝发动态
- *      2: "收藏了某个文章", 判断是否为share的user 是否为user， 否 对粉丝发动态，对share发动态
- *      3: "点赞了某个文章", 判断是否为share的user 是否为user， 否 对粉丝发动态，对share发动态
- *      4: "发表了某个topic", 只需对粉丝发动态
- *      5: "对某个share发表了某个评论", 如果 share的user == comment的user, 否 对粉丝发动态，对share的user发动态，对pid.user 不等于 share.user 发动态
- *      6: "对某个topic发表了某个评论", 如果 topic的user == comment的user, 否 对粉丝发动态，对share的user发动态，对pid.user 不等于 share.user 发动态
- *
- *      7: 关注用户发表
- *  }
- *
  *  消息类型
  *  0: 为动态
  *  1: 系统消息
@@ -33,20 +22,24 @@ var ModelBuilder = require('../modelBuilder');
  */
 var mBuilder = new ModelBuilder(
     {
-        // 创建该消息的人
+        // 创建该消息的人, 接收该消息用户
         sender: {type: Number, ref: "users"},
-        //
         receiver: {type: Number, ref: "users"},
 
-        // 推荐,话题, 评论
+        // 推荐,话题,评论关联
         recommend: {type: Number, ref: "recommends"},
         topic: {type: Number, ref: "topics"},
         comment: {type: Number, ref: "topics"},
 
-        isSee: {type: Boolean, default: false},
+        // 消息类型, 0为个人消息, 1为动态消息, 2为系统消息
         type: {type: Number},
-        createDateTime: {type: Date, default: Date.now},
-        newType: {type: Number}
+
+        // 消息格式
+        newType: {type: Number},
+
+        // 是否查看
+        isSee: {type: Boolean, default: false},
+        date: {type: Date, default: Date.now}
     },
     {
         collectionName: "news",
