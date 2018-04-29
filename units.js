@@ -78,7 +78,7 @@ var sendEmail = function (email, callback) {
 
 function getJson(url, callback) {
     var options = {
-        url: 'url',
+        url: url,
         headers: {'User-Agent': 'request'}
     };
     request(options, function (err, result) {

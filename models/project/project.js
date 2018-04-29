@@ -19,13 +19,22 @@ var ModelBuilder = require('../modelBuilder');
  */
 var mBuilder = new ModelBuilder(
     {
+        // 用户关联
         user: {type: Number, require: true, ref: "users"},
 
+        // git url
         git: {type: String, require: true},
-        name: {type: String, default: ""},
 
+        // 账户， 使用者，基于传入url生成
+        name: {type: String, require: true},
+        owner: {type: String, require: true},
+
+        // 项目状态
         state: {type: Number, default: 0},
+
+        // 备注
         desc: {type: String, default: ""},
+        // 创建时间
         date: {type: Date, default: Date.now}
     },
     {
