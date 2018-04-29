@@ -20,13 +20,22 @@ var ModelBuilder = require('../modelBuilder');
  *      4: "发表了某个topic", 只需对粉丝发动态
  *      5: "对某个share发表了某个评论", 如果 share的user == comment的user, 否 对粉丝发动态，对share的user发动态，对pid.user 不等于 share.user 发动态
  *      6: "对某个topic发表了某个评论", 如果 topic的user == comment的user, 否 对粉丝发动态，对share的user发动态，对pid.user 不等于 share.user 发动态
+ *
+ *      7: 关注用户发表
  *  }
+ *
+ *  消息类型
+ *  0: 为动态
+ *  1: 系统消息
+ *  2: 个人消息
  * schemaOptions
  *  @field: collectionName: "collection"
  */
 var mBuilder = new ModelBuilder(
     {
-        user: {type: Number, ref: "users"},
+        // 创建该消息的人
+        sender: {type: Number, ref: "users"},
+        //
         receiver: {type: Number, ref: "users"},
 
         // 推荐,话题, 评论
@@ -36,7 +45,8 @@ var mBuilder = new ModelBuilder(
 
         isSee: {type: Boolean, default: false},
         type: {type: Number},
-        createDateTime: {type: Date, default: Date.now}
+        createDateTime: {type: Date, default: Date.now},
+        newType: {type: Number}
     },
     {
         collectionName: "news",

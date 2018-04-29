@@ -5,7 +5,7 @@ var mBuilder = require('../../models/user/user').mBuilder;
 var commonFn = require('../../routes/commonFn');
 
 var User = require('../../models/user/user').model;
-
+var Token = require('../../models/token').model;
 /**
  * 登录方法
  * @param req
@@ -32,6 +32,88 @@ var loginFn = function (req, res, next) {
     });
 };
 
+
+
+/**
+ * 登录方法
+ * @param req
+ * @param res
+ * @param next
+ */
+var changPwdFn = function (req, res, next) {
+    var condition = {
+        password: crypto.createHash("md5").update(req.body.oldPwd).digest('hex'),
+        _id: req.body._id
+    };
+    // 判断是否有该用户
+    User.find(condition, function (err, user) {
+        if (user.length === 1){
+            var update = {
+                $set: {
+                    password: crypto.createHash("md5").update(req.body.newPwd).digest('hex')
+                }
+            };
+            User.update(condition, update, function (err, result) {
+                // 异常操作
+                if (err){
+                    res.json({status: 1, error: err, message: "网络异常"});
+                } else {
+                    res.json({status: 0, result: result})
+                }
+            });
+        } else {
+            // 发送异常结果
+            res.json({status: 1, message: "密码错误"});
+        }
+    });
+};
+
+
+/**
+ * 变更密码函数
+ * @param req
+ * @param res
+ * @param next
+ */
+var changPwdWithTokenFn = function (req, res, next) {
+    console.log("lalal");
+    var tokenCondition = {email: req.body.email, uuid: req.body.token};
+    // 查找是否有token 及匹配email
+    Token.findOne(tokenCondition)
+        .then(function (data) {
+            if (data) {
+
+                // 判断是否有该用户
+                User.findOne({email: req.body.email}, function (err, user) {
+                    if (user){
+                        var update = {
+                            $set: {
+                                password: crypto.createHash("md5").update(req.body.password).digest('hex')
+                            }
+                        };
+                        // 修改用户
+                        user.update(update, function (err, result) {
+                            // 异常操作
+                            if (err){
+                                res.status(400);
+                                res.json({status: 1, message: "系统异常"});
+                            } else {
+                                res.json({status: 0, message: "修改密码成功"});
+                            }
+                        });
+
+                        Token.delete(tokenCondition);
+                    } else {
+                        // 发送异常结果
+                        res.status(400);
+                        res.json({status: 1, message: "没有改用户"});
+                    }
+                });
+            } else {
+                res.json({status: 1, message: "token异常"});
+            }
+        });
+};
 
 /**
  * 登出
@@ -112,6 +194,12 @@ var userRouteBuilder = new RouteBuilder(
         patchFn: [
             // commonFn.checkIsLogin,
             // checkUserIsSelfOrIsManager
+            function (req, res, next) {
+                if("password" in req.doc) {
+                    req.doc.password = crypto.createHash("md5").update(req.doc.password).digest('hex');
+                }
+                next();
+            }
         ],
 
         // delete 前置钩子
@@ -132,6 +220,16 @@ var userRouteBuilder = new RouteBuilder(
                 method: "get",
                 url: "/logout/",
                 fn: logout
+            },
+            {
+                method: "post",
+                url: "/change/",
+                fn: changPwdFn
+            },
+            {
+                method: "post",
+                url: "/pwd/change/",
+                fn: changPwdWithTokenFn
             }
         ],
 

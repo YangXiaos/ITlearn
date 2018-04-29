@@ -5,7 +5,8 @@
 var async = require("async");
 var nodemailer = require('nodemailer');
 var User = require('./models/user/user').model;
-
+var Token = require('./models/token').model;
+var UUID = require('node-uuid');
 
 var toggle = function (query, doc, model, callback) {
     var query1 = Object.assign(query, doc);
@@ -39,6 +40,9 @@ var emailFn = function (email, callback) {
             pass: 'zymcbnvqwdcxbgcf'
         }
     });
+
+    var token = UUID.v4();
+    Token.create({uuid: token, email: email});
 
     var mailOptions = {
         from: '178069857@qq.com', // 发件地址

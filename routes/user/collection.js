@@ -15,13 +15,13 @@ module.exports = new RouterBuilder(
     {
         // get 前置路由
         getFn: [
-            commonFn.checkIsLogin
+            // commonFn.checkIsLogin
         ],
 
         // post 前置路由
         postFn: [
-            commonFn.checkIsLogin,
-            commonFn.setDocUser
+            // commonFn.checkIsLogin,
+            // commonFn.setDocUser
         ],
 
         // delete 前置路由

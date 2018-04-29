@@ -31,15 +31,20 @@ var tagRouteBuilder = require('./routes/recommend/tag');
 var groupRouteBuilder = require('./routes/group/group');
 var topicRouteBuilder = require('./routes/group/topic');
 
+// 项目模块
+var projectRouteBuilder = require('./routes/project/project');
+
 // 评论模块
 var commentRouteBuilder = require('./routes/comment');
 
+var system = require('./routes/system');
 
 var app = express();
 app.all("*", function (req, res, next) {
     res.header("Cache-Control", "no-store");
     next();
 });
+
 
 // var secretOrPrivateKey = "ITlearn";  //加密token 校验token时要使用
 // app.use(expressJWT({
@@ -95,7 +100,8 @@ app.use(recommendRouteBuilder.getRouterPath(), recommendRouteBuilder.router);
 // 小组模块
 app.use(groupRouteBuilder.getRouterPath(), groupRouteBuilder.router);
 app.use(topicRouteBuilder.getRouterPath(), topicRouteBuilder.router);
-
+app.use(projectRouteBuilder.getRouterPath(), projectRouteBuilder.router);
+app.use("/v1/system", system);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
