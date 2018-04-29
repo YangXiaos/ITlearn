@@ -3,6 +3,7 @@
 * 
 */
 var async = require("async");
+var request = require("request");
 var nodemailer = require('nodemailer');
 var User = require('./models/user/user').model;
 var Token = require('./models/token').model;
@@ -72,4 +73,23 @@ var sendEmail = function (email, callback) {
         });
 };
 
+
+
+
+function getJson(url, callback) {
+    var options = {
+        url: 'url',
+        headers: {'User-Agent': 'request'}
+    };
+    request(options, function (err, result) {
+        if (err) {
+            console.log("错误：" + err);
+            callback(err, null);
+        } else {
+            callback(err, JSON.parse(result.body));
+        }
+    });
+}
+
 module.exports.sendEmail = sendEmail;
+module.exports.getJson = getJson;
