@@ -22,8 +22,9 @@ var mBuilder = new ModelBuilder(
         user: {type: Number, ref: "users"},
         createDateTime: {type: Date, default: Date.now},
         content: String,
+
         recommend: {type: Number, ref: "recommends"},
-        group: {type: Number, ref: "groups"},
+        project: {type: Number, ref: "projects"},
         topic: {type: Number, ref: "topics"},
         upVotes: [{type: Number, ref: "users"}],
         pid: {type: Number, ref: "comments"}
