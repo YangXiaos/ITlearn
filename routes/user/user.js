@@ -102,7 +102,7 @@ var changPwdWithTokenFn = function (req, res, next) {
                             }
                         });
 
-                        Token.delete(tokenCondition);
+                        Token.remove(tokenCondition);
                     } else {
                         // 发送异常结果
                         res.status(400);

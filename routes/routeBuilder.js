@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 var async = require('async');
 var CollectionsId = require('../models/collectionsIdSchema');
 var settings = require('../settings');
+var toggleMeta = require("../units").toggleMeta;
 
 mongoose.connect('mongodb://localhost/' + settings.dbName);
 
@@ -174,6 +175,16 @@ function RouterBuilder(modelBuilder, routerOptions) {
             } else {
                 res.status(200);
                 res.json({status: 0, error: err, count: data.length});
+            }
+        });
+    });
+
+    this.router.route("/toggle/").patch(function (req, res) {
+        toggleMeta(req.conditions, req.doc, routerBuilder.model, function (err, result, isHas) {
+            if (err) {
+                res.json({status: 1, err: err});
+            } else {
+                res.json({status: 0, isHas: isHas});
             }
         });
     });

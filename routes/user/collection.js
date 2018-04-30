@@ -5,9 +5,9 @@
 var collectionModelBuilder = require('../../models/user/collection').mBuilder;
 var RouterBuilder = require('../routeBuilder');
 var commonFn = require('../../routes/commonFn');
+var sendPersonDynamic = require("./new").sendPersonDynamic;
 
 var Collection = require('../../models/user/collection').model;
-var sendNew = require('../../routes/user/new').sendNew;
 
 
 module.exports = new RouterBuilder(
@@ -33,15 +33,11 @@ module.exports = new RouterBuilder(
 
         postSuccess: function (req, res, data, callback) {
             callback(null, data);
-
-            // 创建动态
-            var new_ = {
-                user: data.user,
-                recommend: data.recommend,
-                type: 2,
-                createDateTime: data.createDateTime
-            };
-            sendNew(new_);
+            sendPersonDynamic({
+                newType: 1,
+                recommend: data._id,
+                sender: req.doc.user
+            });
         },
 
         // 填充, 查询数量限制

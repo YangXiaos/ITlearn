@@ -9,7 +9,16 @@ var User = require('./models/user/user').model;
 var Token = require('./models/token').model;
 var UUID = require('node-uuid');
 
-var toggle = function (query, doc, model, callback) {
+
+/**
+ * query {_id: 1}
+ * doc {upVote: 2}
+ * @param query
+ * @param doc
+ * @param model
+ * @param callback
+ */
+var toggleMeta = function (query, doc, model, callback) {
     var query1 = Object.assign(query, doc);
     async.waterfall([
         function(cb){
@@ -20,11 +29,11 @@ var toggle = function (query, doc, model, callback) {
         function(data, cb){
             var update = data? {$pull: doc}: {$addToSet: doc};
             model.updateOne(query, update, function (err, result) {
-                cb(err, result);
+                cb(err, result, data !== null);
             });
         }
-    ], function (err, result) {
-        callback(err, result);
+    ], function (err, result, isHas) {
+        callback(err, result, isHas);
     });
 };
 
@@ -91,5 +100,15 @@ function getJson(url, callback) {
     });
 }
 
+function copyObj(obj){
+    var newObj = {};
+    for (var attr in obj) {
+        newObj[attr] = obj[attr];
+    }
+    return newObj;
+}
+
+module.exports.toggleMeta = toggleMeta;
 module.exports.sendEmail = sendEmail;
 module.exports.getJson = getJson;
+module.exports.copyObj = copyObj;

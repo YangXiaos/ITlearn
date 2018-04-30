@@ -35,7 +35,8 @@ var mBuilder = new ModelBuilder(
         // 备注
         desc: {type: String, default: ""},
         // 创建时间
-        date: {type: Date, default: Date.now}
+        date: {type: Date, default: Date.now},
+        isPass: {type: Boolean, default: true}
     },
     {
         collectionName: "projects",

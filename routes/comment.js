@@ -5,6 +5,7 @@
 var commentModelBuilder = require('../models/comment').mBuilder;
 var RouterBuilder = require('./routeBuilder');
 var commonFn = require('./commonFn');
+var sendSystemDynamic = require("./user/new").sendSystemDynamic;
 
 var comment = require('../models/comment').model;
 var populate = [{
@@ -43,8 +44,24 @@ module.exports = new RouterBuilder(
 
         // 数据冷处理
         postSuccess: function (req, res, data, callback) {
-            data.populate(populate, function (err, data) {
-                callback(err, data);
+            data.populate(populate, function (err, comment) {
+
+                callback(err, comment);
+
+                var new_ = {
+                    sender: comment.user._id,
+                    comment: comment._id
+                };
+                if (comment.topic) {
+                    new_.topic = comment.topic;
+                } else if (comment.recommend) {
+                    new_.recommend = comment.recommend;
+                } else if (comment.project) {
+                    new_.project = comment.project;
+                }
+                new_.newType = comment.pid ? 3 : 2;
+                new_.pid = comment.pid ? comment.pid._id : undefined;
+                sendSystemDynamic(new_);
             })
         },
 

@@ -6,6 +6,7 @@ var async = require('async');
 var recommendModelBuilder = require('../../models/recommend/recommend').mBuilder;
 var RouterBuilder = require('../routeBuilder');
 var commonFn = require('../../routes/commonFn');
+var sendPersonDynamic = require("../user/new").sendPersonDynamic;
 var sendFollowerDynamic = require("../user/new").sendFollowerDynamic;
 
 var Recommend = require('../../models/recommend/recommend').model;
@@ -31,13 +32,11 @@ var vote = function (req, res, next) {
                             // todo 结果测试
                             res.json({status: 0, isVote: 1, message: "点赞成功", result: result});
 
-                            // 创建动态
-                            var new_ = {
-                                user: user,
-                                recommend: Number(req.query.recommend),
-                                type: 3
-                            };
-                            sendNew(new_);
+                            sendPersonDynamic({
+                                newType: 0,
+                                recommend: data._id,
+                                sender: parseInt(req.query.user)
+                            });
                         }).catch(function (err) {
                             res.status(500);
                             res.json({status: 1, message: "异常problem"});
