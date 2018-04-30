@@ -37,6 +37,7 @@ var mBuilder = new ModelBuilder(
         // 消息格式
         newType: {type: Number},
         content: {type: String},
+        isPass: {type: Boolean},
 
         // 是否查看
         isSee: {type: Boolean, default: false},
