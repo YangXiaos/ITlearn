@@ -76,7 +76,6 @@ var changPwdFn = function (req, res, next) {
  * @param next
  */
 var changPwdWithTokenFn = function (req, res, next) {
-    console.log("lalal");
     var tokenCondition = {email: req.body.email, uuid: req.body.token};
     // 查找是否有token 及匹配email
     Token.findOne(tokenCondition)
@@ -102,7 +101,9 @@ var changPwdWithTokenFn = function (req, res, next) {
                             }
                         });
 
-                        Token.remove(tokenCondition);
+                        Token.remove(tokenCondition, function (err, result) {
+                            console.log(JSON.stringify(result));
+                        });
                     } else {
                         // 发送异常结果
                         res.status(400);
