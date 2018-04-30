@@ -29,7 +29,9 @@ var mBuilder = new ModelBuilder(
         // 推荐,话题,评论关联
         recommend: {type: Number, ref: "recommends"},
         topic: {type: Number, ref: "topics"},
-        comment: {type: Number, ref: "topics"},
+        comment: {type: Number, ref: "comments"},
+        project: {type: Number, ref: "projects"},
+        group: {type: Number, ref: "groups"},
 
         // 消息类型, 0为个人消息, 1为动态消息, 2为系统消息
         type: {type: Number},

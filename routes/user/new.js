@@ -36,7 +36,27 @@ module.exports = new RouterBuilder(
 
         ],
 
-        populate: "user",
+        populate: [
+            {
+                path: "recommend",
+                model: "recommends"
+            }, {
+                path: "topic",
+                model: "topics"
+            }, {
+                path: "comment",
+                model: "comments"
+            }, {
+                path: "project",
+                model: "projects"
+            }, {
+                path: "group",
+                model: "groups"
+            }, {
+                path: "sender",
+                model: "users"
+            }
+        ],
         // 限制数量
         limit: 10
     }
