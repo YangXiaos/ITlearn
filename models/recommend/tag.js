@@ -18,7 +18,8 @@ var ModelBuilder = require('../modelBuilder');
 var mBuilder = new ModelBuilder(
     {
         _id: Number,
-        name: String
+        name: String,
+        color: {type: String, default: "#596559"},
     },
     {
         collectionName: "tags",

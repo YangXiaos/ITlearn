@@ -26,7 +26,7 @@ var tagRouterBuilder = new RouterBuilder(
         ],
 
         // 查询数量限制
-        limit: 10
+        // limit: 10
     }
 );
 
