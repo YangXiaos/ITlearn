@@ -51,7 +51,9 @@ var createNew = function (new_) {
     delete new_.createDateTime;
     New.findOne(new_, function (err, data) {
         if (data === null) {
-            New.create(new_);
+            New.create(new_, function (err, doc) {
+                console.log('创建动态', err, JSON.stringify(doc));
+            });
         }
     })
 };
@@ -93,13 +95,15 @@ var sendPersonDynamic = function (new_, userId) {
  * @param new_
  */
 var sendFollowerDynamic = function (new_) {
-    var condition = {follower: new_.user};
+    console.log(new_);
+    var condition = {follower: new_.sender};
     Relation.find(condition, function (err, data) {
+        console.log(data);
         data.forEach(function (relation) {
             var new1 = copyObj(new_);
             new1.receiver = relation.user;
             new1.type = 1;
-            createNew(new_);
+            createNew(new1);
         });
     });
 };
@@ -117,13 +121,6 @@ var sendSystemDynamic = function (new_, userId) {
 };
 
 
-var sendNew = function (new_) {
-};
-
-
-
-
-module.exports.sendNew = sendNew;
 module.exports.sendPersonDynamic = sendPersonDynamic;
 module.exports.sendFollowerDynamic = sendFollowerDynamic;
 module.exports.sendSystemDynamic = sendSystemDynamic;
