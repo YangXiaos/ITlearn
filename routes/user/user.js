@@ -7,6 +7,7 @@ var sendEmail = require("../../units").sendEmail;
 
 var User = require('../../models/user/user').model;
 var Token = require('../../models/token').model;
+
 /**
  * 登录方法
  * @param req
@@ -21,6 +22,9 @@ var loginFn = function (req, res, next) {
             if(token) {
                 User.find({email: req.body.email}, "-__v -password", function (err, user) {
                     if (user.length === 1){
+                        user[0].update({$set: {isPass: true}}, function (err, res) {
+                            console.log(res);
+                        });
                         req.session.user = user[0]._doc;
                         req.session.save();
                         res.json({
@@ -46,7 +50,8 @@ var loginFn = function (req, res, next) {
     }
     var condition = {
         password: crypto.createHash("md5").update(req.body.password).digest('hex'),
-        email: req.body.email
+        email: req.body.email,
+        isPass: true
     };
     User.find(condition, "-__v -password", function (err, user) {
         if (user.length === 1){

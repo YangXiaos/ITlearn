@@ -28,6 +28,7 @@ var mBuilder = new ModelBuilder(
         desc: {type: String, default: ""},
         isManager: {type: Boolean, default: false},
 
+        isPass: {type: Boolean, default: false},
         createDateTime: {type: Date, default: Date.now}
     },
     {
