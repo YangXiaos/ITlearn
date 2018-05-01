@@ -148,7 +148,7 @@ function RouterBuilder(modelBuilder, routerOptions) {
         } else {
             req.conditions = extractFields(req.query, fields, "query");
         }
-
+        console.log("body" + JSON.stringify(req.body));
         req.doc = extractFields(req.body, fields);
         req.params = extractFields(req.params, fields);
         req.filedList = routerOptions.filedList;

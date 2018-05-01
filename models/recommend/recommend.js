@@ -28,7 +28,8 @@ var mBuilder = new ModelBuilder(
         createDateTime: {type: Date, default: Date.now},
         desc: {type: String, default: ""},
         title: String,
-        content: {type: String, default: ""},
+        content: {type: String},
+        render: {type: String, default: ""},
         tags: [{type: Number, ref: "tags"}],
         upVotes: [{type: Number, ref: "users"}],
         isPass: {type: Boolean, default: true}

@@ -44,6 +44,16 @@ module.exports = new RouteBuilder(
             }
         ],
 
+        // patch 前置路由
+        patchFn: [
+            function (req, res, next) {
+                var _ = req.doc.git.split('/');
+                req.doc.owner = _[_.length - 2];
+                req.doc.name = _[_.length - 1];
+                next();
+            }
+        ],
+
         // delete 前置路由
         deleteFn: [
             // commonFn.checkIsLogin,

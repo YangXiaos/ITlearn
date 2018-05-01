@@ -112,6 +112,7 @@ var recommendRouterBuilder = new RouterBuilder(
 
         // patch 前置路由方法
         patchFn: [
+            beforePost
             // commonFn.checkIsLogin,
             // commonFn.checkUserByModel(Recommend)
         ],

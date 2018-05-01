@@ -21,6 +21,7 @@ var mBuilder = new ModelBuilder(
     {
         user: {type: Number, ref: "users"},
         content: String,
+        render: String,
         recommend: {type: Number, ref: "recommends"},
 
         project: {type: Number, ref: "projects"},

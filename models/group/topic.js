@@ -38,6 +38,7 @@ var mBuilder = new ModelBuilder(
             type: String,
             required: true
         },
+        render: {type: String, default: ""},
         createDateTime: {type: Date, default: Date.now},
         upUsers: [{type: Number, ref: 'users'}],
         isPass: {type: Boolean, default: true}
