@@ -27,7 +27,7 @@ var loginFn = function (req, res, next) {
             });
         } else {
             // 发送异常结果
-            res.json({status: 1, message: "没有该用户"});
+            res.json({status: 1, message: "邮箱或密码错误！"});
         }
     });
 };
