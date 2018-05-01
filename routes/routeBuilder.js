@@ -282,7 +282,7 @@ function RouterBuilder(modelBuilder, routerOptions) {
                 update = {$set: req.doc};
             }
             console.log(update);
-            routerBuilder.model.update(req.conditions, update, function (err, result) {
+            routerBuilder.model.updateMany(req.conditions, update, function (err, result) {
                 // 异常操作
                 if (err){
                     res.status(404);
