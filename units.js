@@ -59,7 +59,7 @@ var emailFn = function (email, callback) {
         to: email, // 收件列表
         subject: '来自程序员交流平台',
         text: 'Hello world 喵喵喵?',
-        html: '<b>点击修改你的密码 <a href="http://localhost:8080/set-new-Pwd/?email=' + email + '&token?=' + token + '">修改密码</a></b>' // html 内容
+        html: '<b>点击修改你的密码 <a href="http://localhost:8080/set-new-Pwd/?email=' + email + '&token=' + token + '">修改密码</a></b>' // html 内容
     };
 
     // send mail with defined transport object
