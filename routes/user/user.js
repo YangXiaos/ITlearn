@@ -3,6 +3,7 @@ var crypto= require('crypto');
 var RouteBuilder = require('../routeBuilder');
 var mBuilder = require('../../models/user/user').mBuilder;
 var commonFn = require('../../routes/commonFn');
+var sendEmail = require("../../units").sendEmail;
 
 var User = require('../../models/user/user').model;
 var Token = require('../../models/token').model;
@@ -13,6 +14,36 @@ var Token = require('../../models/token').model;
  * @param next
  */
 var loginFn = function (req, res, next) {
+
+    if(req.body.uuid) {
+        Token.findOne(req.body, function (err, token) {
+            console.log(req.body);
+            if(token) {
+                User.find({email: req.body.email}, "-__v -password", function (err, user) {
+                    if (user.length === 1){
+                        req.session.user = user[0]._doc;
+                        req.session.save();
+                        res.json({
+                            status: 0,
+                            user: req.session.user
+                        });
+                        Token.remove(req.body, function (err, result) {
+                            console.log(JSON.stringify(result));
+                        });
+                    } else {
+                        // 发送异常结果
+                        res.status(400);
+                        res.json({status: 1, message: "用户异常！"});
+                    }
+                });
+            } else {
+                res.status(400);
+                res.json({status: 1, message: "验证异常"});
+            }
+        });
+
+        return;
+    }
     var condition = {
         password: crypto.createHash("md5").update(req.body.password).digest('hex'),
         email: req.body.email
@@ -237,8 +268,11 @@ var userRouteBuilder = new RouteBuilder(
 
         // post请求成功
         postSuccess: function (req, res, data, callback) {
-            req.session.user = data;
-            req.session.save();
+            // req.session.user = data;
+            // req.session.save();
+            sendEmail(data.email, true, function (err, info) {
+                console.log(err, info);
+            });
             callback(null, data);
         },
 

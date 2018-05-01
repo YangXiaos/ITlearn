@@ -38,7 +38,7 @@ var toggleMeta = function (query, doc, model, callback) {
 };
 
 
-var emailFn = function (email, callback) {
+var emailFn = function (email, isRegister, callback) {
     var transporter = nodemailer.createTransport({
         //https://github.com/andris9/nodemailer-wellknown#supported-services 支持列表
         service: 'qq',
@@ -58,10 +58,13 @@ var emailFn = function (email, callback) {
         from: '178069857@qq.com', // 发件地址
         to: email, // 收件列表
         subject: '来自程序员交流平台',
-        text: 'Hello world 喵喵喵?',
+        text: 'Hello world?',
         html: '<b>点击修改你的密码 <a href="http://localhost:8080/set-new-Pwd/?email=' + email + '&token=' + token + '">修改密码</a></b>' // html 内容
     };
 
+    if (isRegister) {
+        mailOptions.html = '<b>点击验证 <a href="http://localhost:8080/turn_page/?email=' + email + '&token=' + token + '">跳转</a></b>';
+    }
     // send mail with defined transport object
     transporter.sendMail(mailOptions, function (error, info) {
         console.log(error);
@@ -70,12 +73,12 @@ var emailFn = function (email, callback) {
 };
 
 
-var sendEmail = function (email, callback) {
+var sendEmail = function (email, isRegister, callback) {
 
     User.findOne({email: email})
         .then(function (data) {
             if (data) {
-                emailFn(email, callback)
+                emailFn(email, isRegister, callback)
             } else {
                 callback('no user', "没有该用户");
             }
