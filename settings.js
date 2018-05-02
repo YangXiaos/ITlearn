@@ -15,7 +15,7 @@ var incCollectionList = [
 ];
 
 
-var dbName = "ITDio";
+var dbName = "ITLearning";
 
 
 // 数据库
